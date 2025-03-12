@@ -1,4 +1,3 @@
-# Ensure you are using pylint 2.0.0 or later; if you encounter max-complexity errors, update pylint.
 [MASTER]
 max-module-lines=200
 

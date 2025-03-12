@@ -15,11 +15,10 @@ class DummyRecombiner(RecombinerABC):
         return parent1 + "_" + parent2
 
 def test_evolve_population():
-    # Configure a small population and a couple of elites
-    config = GeneticConfig(population_size=10, elite_size=2)
-    mate_selector = DummyMateSelector()
-    recombiner = DummyRecombiner()
-    engine = EvolutionEngine(config, mate_selector, recombiner)
+    # Configure a small population and a couple of elites in a single call
+    engine = EvolutionEngine(GeneticConfig(population_size=10, elite_size=2),
+                             DummyMateSelector(),
+                             DummyRecombiner())
 
     # Create an initial population with decreasing fitness values
     population = []
