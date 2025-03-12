@@ -1,21 +1,27 @@
 import dspy
 from genetic_llm.recombination_abc import RecombinerABC
 
-class DSPyRecombiner(RecombinerABC, dspy.Module):
+class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=type(dspy.Module)):
     def __init__(self) -> None:
         super().__init__()
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
-        self.recombine = dspy.Predict("parent1_chromosome, parent2_chromosome -> child_chromosome")
+        self.recombine = dspy.ChainOfThought("parent1_chromosome, parent2_chromosome -> child_chromosome")
 
     def combine(self, parent1: str, parent2: str) -> str:
         if not isinstance(parent1, str) or not isinstance(parent2, str):
             raise ValueError("Both parents must be strings")
+        if not parent1 and not parent2:
+            return ""
             
-        with dspy.context(lm=self.lm):
-            result = self.recombine(
-                parent1_chromosome=parent1,
-                parent2_chromosome=parent2
-            )
-        
-        return getattr(result, 'child_chromosome', '')
+        try:
+            with dspy.context(lm=self.lm):
+                result = self.recombine(
+                    parent1_chromosome=parent1,
+                    parent2_chromosome=parent2
+                )
+            child = getattr(result, 'child_chromosome', '')
+            return str(child) if child else ''
+        except Exception as e:
+            print(f"Recombination error between '{parent1}' and '{parent2}': {str(e)}")
+            return ""
 # Package initialization
