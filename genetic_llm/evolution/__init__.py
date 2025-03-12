@@ -1,8 +1,8 @@
 from typing import List
 from .core import Agent, GeneticConfig
+from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
-
 from genetic_llm.evolution_abc import EvolutionEngineABC
 
 class EvolutionEngine(EvolutionEngineABC):
@@ -15,7 +15,6 @@ class EvolutionEngine(EvolutionEngineABC):
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:
         # First evaluate current population's fitness
-        from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
         evaluator = StringOptimizationEvaluator(self.config)
         evaluator.evaluate(population)
         if self.config.elite_size > self.config.population_size:
