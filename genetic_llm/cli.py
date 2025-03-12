@@ -11,7 +11,10 @@ def main():
 @click.option("--generations", default=100, help="Number of generations to evolve")
 def evolve(generations):
     config = GeneticConfig()
-    engine = EvolutionEngine(config)
+    # Inject implementations
+    mate_selector = MateSelector()
+    recombiner = Recombiner()
+    engine = EvolutionEngine(config, mate_selector, recombiner)
     
     # Initialize random population
     population = [

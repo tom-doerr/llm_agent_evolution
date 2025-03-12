@@ -1,13 +1,13 @@
 from typing import List
-from .core import Agent, GeneticConfig
-from .mate_selection import MateSelector
-from .recombination import Recombiner
+from .core import Agent, GeneticConfig, MateSelector, RecombinerABC
 
 class EvolutionEngine:
-    def __init__(self, config: GeneticConfig):
+    def __init__(self, config: GeneticConfig, 
+                 mate_selector: MateSelector,
+                 recombiner: RecombinerABC):
         self.config = config
-        self.mate_selector = MateSelector()
-        self.recombiner = Recombiner()
+        self.mate_selector = mate_selector
+        self.recombiner = recombiner
         
     def evolve_population(self, population: List[Agent]) -> List[Agent]:
         new_population = []
