@@ -1,4 +1,5 @@
 from .core import Agent, GeneticConfig
+from genetic_llm.core_abc import AgentABC
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
