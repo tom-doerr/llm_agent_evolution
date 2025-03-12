@@ -18,7 +18,7 @@ class TestDSPyRecombiner:
 
     def test_combine_empty_parents(self) -> None:
         recombiner = DSPyRecombiner()
-        assert len(recombiner.combine("", "")) == 0
+        assert recombiner.combine("", "") == ""
 
     def test_combine_mixed_parents(self) -> None:
         recombiner = DSPyRecombiner()
@@ -28,7 +28,17 @@ class TestDSPyRecombiner:
 
     def test_invalid_input_types(self) -> None:
         recombiner = DSPyRecombiner()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as excinfo:
             recombiner.combine(123, "abc")
-        with pytest.raises(ValueError):
+        assert "Both parents must be strings" in str(excinfo.value)
+        
+        with pytest.raises(ValueError) as excinfo:
             recombiner.combine("abc", None)
+        assert "Both parents must be strings" in str(excinfo.value)
+
+    def test_single_empty_parent(self) -> None:
+        recombiner = DSPyRecombiner()
+        child = recombiner.combine("ABCDEF", "")
+        assert isinstance(child, str)
+        assert len(child) > 0
+        assert any(c in child for c in "ABCDEF")
