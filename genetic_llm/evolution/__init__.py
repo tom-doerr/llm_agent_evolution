@@ -1,39 +1,38 @@
-from typing import List
 from .core import Agent, GeneticConfig
-from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
+from genetic_llm.evaluator_abc import EvaluatorABC
 
 class EvolutionEngine(EvolutionEngineABC):
-    def __init__(self, config: GeneticConfig, 
+    def __init__(self, 
+                 config: GeneticConfig, 
                  mate_selector: MateSelector,
-                 recombiner: RecombinerABC):
+                 recombiner: RecombinerABC,
+                 evaluator: EvaluatorABC):
+        if config.elite_size > config.population_size:
+            raise ValueError("Elite size cannot exceed population size")
         self.config = config
         self.mate_selector = mate_selector
         self.recombiner = recombiner
+        self.evaluator = evaluator
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:
-        # First evaluate current population's fitness
-        evaluator = StringOptimizationEvaluator(self.config)
-        evaluator.evaluate(population)
-        if self.config.elite_size > self.config.population_size:
-            raise ValueError("Elite size cannot exceed population size")
+        self.evaluator.evaluate(population)
             
-        # Preserve top performers
         elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
         
-        # Generate offspring to fill remaining slots
         num_children = self.config.population_size - len(elites)
         children = []
         for _ in range(num_children):
-            parents = [self.mate_selector.select(population) for _ in range(2)]
+            parent1 = self.mate_selector.select(population)
+            parent2 = self.mate_selector.select([a for a in population if a != parent1] or population)
+            
             child_chromosomes = {
-                ct: self.recombiner.combine(parents[0].chromosomes[ct], parents[1].chromosomes[ct])
-                for ct in parents[0].chromosomes  # Use first parent's chromosome types
+                ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
+                for ct in parent1.chromosomes.keys()
             }
             children.append(Agent(child_chromosomes))
         
-        new_population = elites + children
-        return new_population
+        return elites + children
 # Package initialization
