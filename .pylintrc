@@ -1,8 +1,9 @@
 [MASTER]
 max-module-lines=100
+ignore = *.md
 
 [DESIGN]
-max-cyclomatic-complexity=10  # Increased from 5 to allow slightly more complex methods
+# Removed unrecognized cyclomatic-complexity setting
 
 [TYPECHECK]
 ignored-modules=dspy
