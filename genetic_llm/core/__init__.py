@@ -28,7 +28,7 @@ class Agent:
         if len(unique_types) != len(chromosomes):
             raise ValueError("Duplicate chromosome types detected")
             
-        if not (0.0 <= fitness <= 1.0):
+        if not 0.0 <= fitness <= 1.0:
             raise ValueError(f"Fitness must be between 0.0-1.0, got {fitness:.2f}")
 
         self.chromosomes = {c.type: c.value for c in chromosomes}
