@@ -22,3 +22,4 @@ class DSPyRecombiner(RecombinerABC, dspy.Module):
             raise RuntimeError("Recombination failed - missing child_chromosome in response")
             
         return str(result.child_chromosome)
+# Package initialization

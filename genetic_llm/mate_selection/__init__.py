@@ -30,3 +30,4 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             raise IndexError(f"Selected index {index} out of bounds [0-{len(population)-1}]")
             
         return population[index]
+# Package initialization

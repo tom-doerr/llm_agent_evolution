@@ -1,12 +1,6 @@
-from enum import Enum
 from typing import NamedTuple
 from pydantic import BaseModel, Field
-from genetic_llm.core_abc import GeneticConfigABC, AgentABC
-
-class ChromosomeType(Enum):
-    TASK = "task"
-    MATE_SELECTION = "mate_selection"
-    RECOMBINATION = "recombination"
+from genetic_llm.core_abc import GeneticConfigABC, AgentABC, ChromosomeType
 
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
