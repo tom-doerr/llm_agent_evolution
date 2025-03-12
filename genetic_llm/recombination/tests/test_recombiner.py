@@ -10,7 +10,7 @@ def mock_recombine_fixture(monkeypatch):
     monkeypatch.setattr(dspy, 'ChainOfThought', lambda _: mock)
     return mock
 
-class TestDSPyRecombiner:
+class TestDSPyRecombiner:  # pylint: disable=too-many-public-methods
     def test_implements_interface(self):
         assert issubclass(DSPyRecombiner, RecombinerABC)
         assert issubclass(DSPyRecombiner, dspy.Module)
@@ -41,8 +41,8 @@ class TestDSPyRecombiner:
         ("", "valid"),
         ("valid", "")
     ])
-    def test_combine_with_empty_parent(self, parent1, parent2):
-        mock_recombine.return_value = Mock(child_chromosome="hybrid")
+    def test_combine_with_empty_parent(self, mock_recombine_fixture, parent1, parent2):
+        mock_recombine_fixture.return_value = Mock(child_chromosome="hybrid")
         recombiner = DSPyRecombiner()
         assert recombiner.combine(parent1, parent2) == "hybrid"
 

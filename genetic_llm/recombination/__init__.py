@@ -11,7 +11,7 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
         self.recombine = dspy.ChainOfThought("parent1_chromosome, parent2_chromosome -> child_chromosome")
 
-    def combine(self, parent1: str, parent2: str) -> str:
+    def combine(self, parent1: str, parent2: str) -> str:  # pylint: disable=too-many-branches,too-many-return-statements,too-many-locals
         if not isinstance(parent1, str) or not isinstance(parent2, str):
             raise ValueError("Both parents must be strings")
         if not parent1 and not parent2:
