@@ -3,6 +3,7 @@ max-module-lines=200
 
 [DESIGN]
 max-cyclomatic-complexity=5
+ignored-modules=dspy
 min-similarity-lines=10
 max-args=5
 max-locals=10
