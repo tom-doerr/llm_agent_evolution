@@ -67,6 +67,34 @@ class TestEvolutionEngineBasics:
         # Should preserve both top 10 fitness agents
         assert sum(1 for a in new_pop if a.fitness == 10) == 2
 
+class TestEvolutionEdgeCases:
+    def test_single_parent_population(self):
+        config = GeneticConfig(population_size=5, elite_size=1)
+        engine = TestConcreteEvolutionEngine(
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        )
+        
+        population = [TestAgent({ct: "clone" for ct in ChromosomeType}, fitness=10)] * 5
+        new_pop = engine.evolve_population(population)
+        
+        assert len(new_pop) == 5
+        assert all(agent.chromosomes == population[0].chromosomes for agent in new_pop)
+
+    def test_minimum_population_size(self):
+        config = GeneticConfig(population_size=2, elite_size=1)
+        engine = TestConcreteEvolutionEngine(
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        )
+        
+        population = [
+            TestAgent({ct: "A" for ct in ChromosomeType}, fitness=10),
+            TestAgent({ct: "B" for ct in ChromosomeType}, fitness=5)
+        ]
+        new_pop = engine.evolve_population(population)
+        
+        assert new_pop[0].fitness == 10  # Elite preserved
+        assert any(agent.chromosomes[ChromosomeType.DNA] == "A" for agent in new_pop)
+
 class TestEvolutionEngineSemantics:
     def test_chromosome_types_preserved(self):
         # Create and evolve population in one step

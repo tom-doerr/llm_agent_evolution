@@ -24,25 +24,23 @@ class EvolutionEngine(EvolutionEngineABC):
         self.evaluator.evaluate(population)
         
         elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
-        children = [
-            Agent({
-                ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
-                for ct in parent1.chromosomes.keys()
-            })
-            for _ in range(self.config.population_size - len(elites))
-            for parent1, parent2 in [(self.mate_selector.select(population),
-                                     self.mate_selector.select([a for a in population if a != parent1] or population))]
-        ]
+        children = []
+        
+        # Calculate exact number of children needed
+        num_children = self.config.population_size - len(elites)
+        
         for _ in range(num_children):
             parent1 = self.mate_selector.select(population)
             remaining = [a for a in population if a != parent1]
-            parent2 = self.mate_selector.select(remaining if remaining else population)
+            
+            # Ensure we don't try to select from empty list
+            parent2_source = remaining if remaining else population
+            parent2 = self.mate_selector.select(parent2_source)
             
             child_chromosomes = {
                 ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
                 for ct in parent1.chromosomes.keys()
             }
-            children.append(Agent(child_chromosomes))  # pylint: disable=abstract-class-instantiated
-        
+            children.append(Agent(child_chromosomes))
         return elites + children
 # Package initialization
