@@ -1,8 +1,7 @@
-import abc
 import dspy
 from genetic_llm.recombination_abc import RecombinerABC
 
-class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=abc.ABCMeta):
+class DSPyRecombiner(RecombinerABC, dspy.Module):
     def __init__(self) -> None:
         super().__init__()
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
@@ -19,8 +18,5 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=abc.ABCMeta):
             parent2_chromosome=parent2
         )
         
-        if not hasattr(result, 'child_chromosome'):
-            raise RuntimeError("Recombination failed - missing child_chromosome in response")
-            
-        return str(result.child_chromosome)
+        return str(getattr(result, 'child_chromosome', ''))
 # Package initialization

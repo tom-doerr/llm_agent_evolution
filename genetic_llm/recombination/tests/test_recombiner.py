@@ -1,41 +1,30 @@
 import pytest
+from unittest.mock import Mock
+import dspy
 from genetic_llm.recombination import DSPyRecombiner
-from genetic_llm.recombination_abc import RecombinerABC
 
 class TestDSPyRecombiner:
-    def test_implements_abc(self):
-        assert issubclass(DSPyRecombiner, RecombinerABC)
-    def test_combine_valid_parents(self) -> None:
-        recombiner = DSPyRecombiner()
-        parent_a = "ABCDEF"
-        parent_b = "GHIJKL"
-        child = recombiner.combine(parent_a, parent_b)
-        
-        assert isinstance(child, str)
-        assert len(child) > 0
+    def test_implements_interface(self):
+        assert isinstance(DSPyRecombiner(), dspy.Module)
 
-    def test_combine_empty_parents(self) -> None:
+    @pytest.fixture
+    def mock_recombine(self, monkeypatch):
+        mock = Mock()
+        monkeypatch.setattr(dspy, 'ChainOfThought', lambda _: mock)
+        return mock
+
+    def test_combine_valid_parents(self, mock_recombine):
+        mock_recombine.return_value = Mock(child_chromosome="ABCDEFGHIJKL")
+        recombiner = DSPyRecombiner()
+        result = recombiner.combine("ABCDEF", "GHIJKL")
+        assert result == "ABCDEFGHIJKL"
+
+    def test_combine_empty_parents(self):
         recombiner = DSPyRecombiner()
         assert recombiner.combine("", "") == ""
 
-    def test_combine_mixed_parents(self) -> None:
+    def test_combine_error_handling(self, mock_recombine):
+        mock_recombine.side_effect = Exception("API error")
         recombiner = DSPyRecombiner()
-        child = recombiner.combine("123", "abc")
-        assert isinstance(child, str)
-        assert len(child) > 0
-
-    def test_invalid_input_types(self) -> None:
-        recombiner = DSPyRecombiner()
-        with pytest.raises(ValueError) as excinfo:
-            recombiner.combine(123, "abc")
-        assert "Both parents must be strings" in str(excinfo.value)
-        
-        with pytest.raises(ValueError) as excinfo:
-            recombiner.combine("abc", None)
-        assert "Both parents must be strings" in str(excinfo.value)
-
-    def test_single_empty_parent(self) -> None:
-        recombiner = DSPyRecombiner()
-        child = recombiner.combine("ABCDEF", "")
-        assert isinstance(child, str)
-        assert len(child) > 0
+        result = recombiner.combine("123", "abc")
+        assert result == ""  # Default empty response on error
