@@ -1,5 +1,5 @@
 import pytest
-from genetic_llm.core import Agent, ChromosomeType, Chromosome
+from genetic_llm.core import Agent, ChromosomeType, Chromosome, GeneticConfig
 from genetic_llm.core_abc import AgentABC
 
 class TestAgent:

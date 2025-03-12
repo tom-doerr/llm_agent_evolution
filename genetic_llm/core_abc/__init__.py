@@ -8,8 +8,8 @@ class GeneticConfigABC(ABC):
     def validate_size(cls, population_size: int) -> bool:
         """Validate population size meets implementation constraints"""
         
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def validate_mutation_rate(cls, rate: float) -> bool:
         """Validate mutation rate is within acceptable bounds"""
 
