@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
+class MateSelectionConfig(BaseModel):
 class MateSelectionConfig:
     model_name: str = 'openrouter/google/gemini-2.0-flash-001'
     timeout_seconds: int = 10
