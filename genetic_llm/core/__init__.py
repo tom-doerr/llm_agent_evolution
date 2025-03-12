@@ -1,14 +1,13 @@
 from enum import Enum
-from pydantic import BaseModel, Field, ValidationError
-from abc import ABC, abstractmethod
-from typing import Dict, List, NamedTuple
+from typing import NamedTuple
+from pydantic import BaseModel, Field
+from genetic_llm.core_abc import GeneticConfigABC, AgentABC
 
 class ChromosomeType(Enum):
     TASK = "task"
     MATE_SELECTION = "mate_selection"
     RECOMBINATION = "recombination"
 
-from ..core_abc import GeneticConfigABC
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
     population_size: int = Field(default=50, gt=0)
@@ -19,7 +18,6 @@ class Chromosome(NamedTuple):
     type: ChromosomeType
     value: str
 
-from ..core_abc import AgentABC
 
 class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
