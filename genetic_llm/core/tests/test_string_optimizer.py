@@ -23,8 +23,7 @@ class TestStringOptimizationEvaluator:
         
     def test_length_penalty(self, config):
         evaluator = StringOptimizationEvaluator(config)
-        long_string = "a" * 25 + "b" * 10  # 35 chars
-        agent = Agent((
+        agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, long_string),
             Chromosome(ChromosomeType.MATE_SELECTION, "test"),
             Chromosome(ChromosomeType.RECOMBINATION, "test")

@@ -53,11 +53,9 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
             if random.random() < mutation_rate:
                 chars[i] = random.choice('abcdefghijklmnopqrstuvwxyz')  # pylint: disable=consider-using-enumerate
         
-        # Length mutation (10% chance to add/remove)
+        # Length mutation with simplified logic
         if random.random() < 0.1:
-            if random.random() < 0.5 and len(chars) > 1:
-                chars.pop(random.randint(0, len(chars)-1))
-            else:
-                chars.append(random.choice('abcdefghijklmnopqrstuvwxyz'))
+            modify_len = random.random() < 0.5 and len(chars) > 1
+            chars.pop(random.randint(0, len(chars)-1)) if modify_len else chars.append(random.choice('abcdefghijklmnopqrstuvwxyz'))
         
         return Chromosome(chromosome.type, ''.join(chars))

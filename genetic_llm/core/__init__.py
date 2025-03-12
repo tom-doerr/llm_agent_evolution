@@ -33,7 +33,7 @@ def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
     t1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK).value
     t2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK).value
     crossover_point = len(t1) // 2
-    return Agent((
+    return Agent((  # pylint: disable=abstract-class-instantiated
         Chromosome(ChromosomeType.TASK, t1[:crossover_point] + t2[crossover_point:]),
         parent1.chromosomes[1],
         parent1.chromosomes[2],
@@ -44,18 +44,19 @@ class Agent(AgentABC):
         required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
         seen_types = set()
 
-        # Validate chromosome types and uniqueness
-        for chromo in chromosomes:
+        # Validate chromosomes in a single loop
+        for i, chromo in enumerate(chromosomes):
             if not isinstance(chromo.type, ChromosomeType):
-                raise TypeError(f"Invalid chromosome type {type(chromo.type)} - must be ChromosomeType")
+                raise TypeError(f"Invalid type for chromosome {i}: {type(chromo.type)}")
             if chromo.type in seen_types:
-                raise ValueError(f"Duplicate chromosome type: {chromo.type}")
+                raise ValueError(f"Duplicate type: {chromo.type}")
             seen_types.add(chromo.type)
+            if len(seen_types) == 3:  # Early exit if all required types found
+                break
 
-        # Check required types
-        if not required_types.issubset(seen_types):
-            missing = required_types - seen_types
-            raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
+        if required_types - seen_types:
+            missing = ', '.join(t.value for t in (required_types - seen_types))
+            raise ValueError(f"Missing chromosome types: {missing}")
             
         if not 0.0 <= fitness <= 1.0:
             raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")
@@ -97,7 +98,7 @@ def evolve_population(population: list[Agent], config: GeneticConfig, evaluator:
             mutated = evaluator.mutate(chromo, config.mutation_rate)
             mutated_chromosomes.append(mutated)
         
-        new_population.append(Agent(tuple(mutated_chromosomes)))
+        new_population.append(Agent(tuple(mutated_chromosomes)))  # pylint: disable=abstract-class-instantiated
     
     return new_population[:config.population_size]
 
