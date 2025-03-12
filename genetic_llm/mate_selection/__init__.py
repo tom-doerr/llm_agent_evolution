@@ -1,6 +1,6 @@
 import dspy
 from genetic_llm.core import Agent
-from genetic_llm.mate_selection_abc import MateSelector
+from .mate_selection_abc import MateSelector
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def __init__(self, model: str = 'openrouter/google/gemini-2.0-flash-001'):

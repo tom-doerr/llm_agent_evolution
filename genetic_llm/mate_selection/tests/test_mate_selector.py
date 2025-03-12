@@ -3,7 +3,7 @@ import dspy
 from unittest import mock
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.core import Agent
-from genetic_llm.mate_selection_abc import MateSelector  # ChromosomeType removed
+from genetic_llm.mate_selection import MateSelector
 
 class TestDSPyMateSelector:
     def test_implements_abc(self):
