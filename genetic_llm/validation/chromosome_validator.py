@@ -13,12 +13,14 @@ class JSONSchemaValidator(ChromosomeValidatorABC):
         self.schemas = schemas
         
     def validate(self, chromosomes: Dict[str, str]) -> bool:
-        for ct, value in chromosomes.items():
-            if ct not in self.schemas:
-                raise ValueError(f"No schema defined for chromosome type {ct}")
+        for chromosome_type, json_str in chromosomes.items():
+            schema = self.schemas.get(chromosome_type)
+            if not schema:
+                raise ValueError(f"No schema defined for chromosome type {chromosome_type}")
+            
             try:
-                parsed = json.loads(value)
-                validate(instance=parsed, schema=self.schemas[ct])
+                data = json.loads(json_str)
+                validate(instance=data, schema=schema)
             except (json.JSONDecodeError, ValidationError) as e:
-                raise ValueError(f"Invalid {ct} chromosome: {str(e)}") from e
+                raise ValueError(f"Invalid {chromosome_type} chromosome: {str(e)}") from e
         return True

@@ -1,9 +1,10 @@
 from genetic_llm.core import Agent, GeneticConfig
-from genetic_llm.core_abc import AgentABC
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
-from genetic_llm.evaluator_abc import EvaluatorABC  # pylint: disable=no-name-in-module
+from genetic_llm.evaluator_abc import EvaluatorABC
+from genetic_llm.mutation_abc import MutationOperatorABC
+from genetic_llm.validation.chromosome_validator import ChromosomeValidatorABC
 
 class EvolutionEngine(EvolutionEngineABC):
     def __init__(  # pylint: disable=too-many-arguments

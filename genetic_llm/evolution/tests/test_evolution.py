@@ -22,7 +22,7 @@ class TestEvolutionEngineBasics:
     def test_evolve_population_size_remains_constant(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock(), Mock()  # pylint: disable=abstract-class-instantiated
         )
         population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
@@ -31,7 +31,7 @@ class TestEvolutionEngineBasics:
     def test_elites_are_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock(), Mock()
         )
         
         # Create population with ascending fitness
@@ -46,7 +46,7 @@ class TestEvolutionEngineBasics:
         config = GeneticConfig(population_size=5, elite_size=10)
         with pytest.raises(ValueError, match="Elite size cannot exceed population size"):
             TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-                config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+                config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock(), Mock()
             )
 
     def test_tied_fitness_elite_selection(self):
@@ -60,7 +60,7 @@ class TestEvolutionEngineBasics:
         )
         config = GeneticConfig(population_size=5, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock(), Mock()
         )
         
         population = [
@@ -80,7 +80,7 @@ class TestEvolutionEngineBasics:
         config = GeneticConfig(population_size=3, elite_size=1, mutation_rate=1.0)
         mutation_mock = Mock(side_effect=lambda x, _: x + "_mutated")
         engine = TestConcreteEvolutionEngine(
-            config, Mock(), Mock(), Mock(), mutation_mock
+            config, Mock(), Mock(), Mock(), mutation_mock, Mock()
         )
         
         population = [
@@ -93,7 +93,7 @@ class TestEvolutionEngineBasics:
         child = next(a for a in new_pop if a not in population[:1])  # Skip elite
         assert "_mutated" in child.chromosomes["dna"]
 
-    def test_chromosome_validation():
+    def test_chromosome_validation(self):
         from genetic_llm.validation import JSONSchemaValidator
         
         schemas = {
@@ -122,7 +122,7 @@ class TestEvolutionEngineBasics:
         with pytest.raises(ValueError):
             validator.validate(invalid_schema_agent.chromosomes)
 
-    def test_evolution_engine_validates_population():
+    def test_evolution_engine_validates_population(self):
         mock_validator = Mock()
         engine = TestConcreteEvolutionEngine(
             GeneticConfig(population_size=10, elite_size=2),
@@ -139,7 +139,7 @@ class TestEvolutionEngineBasics:
         config = GeneticConfig(population_size=10, elite_size=2, mutation_rate=0.0)
         mutation_mock = Mock(return_value="mutated")
         engine = TestConcreteEvolutionEngine(
-            config, Mock(), Mock(), Mock(), mutation_mock
+            config, Mock(), Mock(), Mock(), mutation_mock, Mock()
         )
         
         population = [TestAgent({ct: "orig" for ct in ChromosomeType}) for _ in range(10)]
