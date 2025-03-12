@@ -70,8 +70,8 @@ class TestEvolutionEngineBasics:
 class TestEvolutionEdgeCases:
     def test_single_parent_population(self):
         config = GeneticConfig(population_size=5, elite_size=1)
-        engine = TestConcreteEvolutionEngine(
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()  # pylint: disable=abstract-class-instantiated
         )
         
         population = [TestAgent({ct: "clone" for ct in ChromosomeType}, fitness=10)] * 5
@@ -82,8 +82,8 @@ class TestEvolutionEdgeCases:
 
     def test_minimum_population_size(self):
         config = GeneticConfig(population_size=2, elite_size=1)
-        engine = TestConcreteEvolutionEngine(
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()  # pylint: disable=abstract-class-instantiated
         )
         
         population = [
