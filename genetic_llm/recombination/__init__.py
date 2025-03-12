@@ -45,14 +45,15 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
         if not child_str:
             return ""
 
+        valid = False
         try:
-            if validate_chromosome(child_str):
-                return child_str
-            logger.error("Chromosome validation failed: %s", child_str)
-            return ""
+            valid = validate_chromosome(child_str)
+            if not valid:
+                logger.error("Chromosome validation failed: %s", child_str)
         except Exception as e:  # pylint: disable=broad-except
             logger.warning("Validation error: %s", e)
-            return ""
+        
+        return child_str if valid else ""
 
     def _handle_retry_error(self, attempt: int, error: Exception) -> None:
         if attempt >= 2:  # Final attempt
