@@ -14,23 +14,22 @@ class EvolutionEngine(EvolutionEngineABC):
         self.mate_selector = mate_selector
         self.recombiner = recombiner
         
-    def evolve_population(self, population: List[Agent]) -> List[Agent]:
-        new_population = []
-        
-        elites: List[Agent] = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
-        new_population.extend(elites)
-        
-        while len(new_population) < self.config.population_size:
-            parent1: Agent = self.mate_selector.select(population)
-            parent2: Agent = self.mate_selector.select(population)
+    def evolve_population(self, population: list[Agent]) -> list[Agent]:
+        if self.config.elite_size > self.config.population_size:
+            raise ValueError("Elite size cannot exceed population size")
             
-            child_chromosomes: dict = {}
-            for ct in parent1.chromosomes:
-                child_chromosomes[ct] = self.recombiner.combine(
-                    parent1.chromosomes[ct],
-                    parent2.chromosomes[ct]
-                )
-                
-            new_population.append(Agent(child_chromosomes))
+        # Preserve top performers
+        elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
+        
+        # Generate offspring to fill remaining slots
+        num_children = self.config.population_size - len(elites)
+        children = []
+        for _ in range(num_children):
+            parents = [self.mate_selector.select(population) for _ in range(2)]
+            child_chromosomes = {
+                ct: self.recombiner.combine(p1.chromosomes[ct], p2.chromosomes[ct])
+                for ct, p1, p2 in zip(parents[0].chromosomes, parents, parents[1:])
+            }
+            children.append(Agent(child_chromosomes))
             
         return new_population
