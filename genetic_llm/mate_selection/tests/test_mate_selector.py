@@ -16,8 +16,8 @@ class TestDSPyMateSelector:
             Agent({"strategy": "C", "parameters": "Z"})
         ]
         
-        # Mock a valid prediction
-        with mock.patch.object(selector.select_mate, 'predict', 
+        # Mock __call__ instead of predict
+        with mock.patch.object(selector.select_mate, '__call__', 
                             return_value=dspy.Prediction(selected_index="1")):
             selected = selector.select(agents)
             assert selected == agents[1]
@@ -37,7 +37,7 @@ class TestDSPyMateSelector:
         selector = DSPyMateSelector()
         agents = [Agent({"strategy": "A"}), Agent({"strategy": "B"}), Agent({"strategy": "C"})]
         
-        with mock.patch.object(selector.select_mate, 'predict',
+        with mock.patch.object(selector.select_mate, '__call__',
                              return_value=dspy.Prediction(selected_index=index)):
             with pytest.raises(expected_error):
                 selector.select(agents)
