@@ -26,7 +26,7 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
             try:
                 return self._attempt_recombination(parent1, parent2)
             except RuntimeError as e:
-                self._handle_retry_error(attempt, e, parent1, parent2)
+                self._handle_retry_error(attempt, e)
         return ""
 
     def _attempt_recombination(self, parent1: str, parent2: str) -> str:
@@ -41,13 +41,11 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
         child = str(getattr(result, 'child_chromosome', ''))
         return child.strip() if child else ""
 
-    def _handle_retry_error(self, attempt: int, error: Exception, parent1: str, parent2: str) -> None:
+    def _handle_retry_error(self, attempt: int, error: Exception) -> None:
         if attempt >= 2:  # Final attempt
-            logger.error("Recombination failed after 3 attempts. Parents: '%s', '%s'. Error: %s",
-                         parent1, parent2, error)
-            raise
+            logger.error("Recombination failed after 3 attempts. Error: %s", error)
+            raise error from None
         delay = 2 ** attempt
-        logger.warning("Attempt %d/3 failed. Retrying in %ds. Error: %s",
-                       attempt + 1, delay, error)
+        logger.warning("Attempt %d/3 failed. Retrying in %ds", attempt + 1, delay)
         time.sleep(delay)
 # Package initialization
