@@ -14,16 +14,14 @@ class EvolutionEngine:
     def evolve_population(self, population: List[Agent]) -> List[Agent]:
         new_population = []
         
-        # Elitism
-        elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
+        elites: List[Agent] = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
         new_population.extend(elites)
         
-        # Breed new agents
         while len(new_population) < self.config.population_size:
-            parent1 = self.mate_selector.select(population)
-            parent2 = self.mate_selector.select(population)
+            parent1: Agent = self.mate_selector.select(population)
+            parent2: Agent = self.mate_selector.select(population)
             
-            child_chromosomes = {}
+            child_chromosomes: dict = {}
             for ct in parent1.chromosomes:
                 child_chromosomes[ct] = self.recombiner.combine(
                     parent1.chromosomes[ct],
