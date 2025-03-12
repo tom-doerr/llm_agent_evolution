@@ -9,8 +9,8 @@ class TestAgent:  # pylint: disable=too-many-public-methods
     def test_agent_creation_with_valid_chromosomes(self):
         agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "test"),
-            Chromosome(ChromosomeType.MATE_SELECTION, "test"),
-            Chromosome(ChromosomeType.RECOMBINATION, "test")
+            Chromosome(ChromosomeType.MATE_SELECTION, "tournament_selection"),
+            Chromosome(ChromosomeType.RECOMBINATION, "single_point_crossover")
         ))
         assert agent.fitness == 0.0
         assert len(agent.chromosomes) == 3

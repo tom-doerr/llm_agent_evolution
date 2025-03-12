@@ -1,7 +1,7 @@
 from typing import NamedTuple
 from pydantic import BaseModel, Field, ConfigDict
 from genetic_llm.core_abc import GeneticConfigABC, AgentABC, PopulationEvaluatorABC
-from genetic_llm.core_abc.chromosome_type import ChromosomeType
+from genetic_llm.core import ChromosomeType
 import random
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
@@ -87,4 +87,21 @@ def evolve_population(population: list[Agent], config: GeneticConfig, evaluator:
         new_population.append(Agent(mutated))  # pylint: disable=abstract-class-instantiated
     
     return new_population[:config.population_size]
+
+def tournament_selection(population: list[Agent], agent: Agent) -> list[Agent]:
+    """Select top 25% performers as mates"""
+    k = max(2, len(population) // 4)
+    return sorted(population, key=lambda a: a.fitness, reverse=True)[:k]
+
+def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
+    """Combine task chromosomes from both parents"""
+    task1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK)
+    task2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK)
+    crossover_point = len(task1.value) // 2
+    new_value = task1.value[:crossover_point] + task2.value[crossover_point:]
+    return Agent((
+        Chromosome(ChromosomeType.TASK, new_value),
+        parent1.chromosomes[1],  # mate selection
+        parent1.chromosomes[2],  # recombination
+    ))
 
