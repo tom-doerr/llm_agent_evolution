@@ -1,4 +1,3 @@
-import json
 from jsonschema import validate, ValidationError
 
 CHROMOSOME_SCHEMA = {
@@ -23,7 +22,6 @@ CHROMOSOME_SCHEMA = {
 def validate_chromosome(data: str) -> bool:
     """Validates chromosome structure against schema. Returns True if valid."""
     try:
-        import json
         parsed = json.loads(data)
         validate(instance=parsed, schema=CHROMOSOME_SCHEMA)
         return True
