@@ -1,14 +1,15 @@
 import pytest
 from unittest.mock import Mock
 from genetic_llm.evolution import EvolutionEngine
-
-# Test concrete implementation
-class TestConcreteEvolutionEngine(EvolutionEngine):
-    """Concrete implementation for testing abstract base class functionality"""
 from genetic_llm.core import GeneticConfig, ChromosomeType
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.evolution_abc import EvolutionEngineABC
+
+# Test concrete implementation
+class TestConcreteEvolutionEngine(EvolutionEngine):
+    """Concrete implementation for testing abstract base class functionality"""
+    pass  # No abstract methods need implementation since parent is concrete
 
 # Test double for abstract Agent class
 class TestAgent:
@@ -31,10 +32,13 @@ class TestEvolutionEngine:
         mock_evaluator = Mock()
         engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), mock_evaluator)
         
+        # Create population with ascending fitness
         population = [TestAgent({ct: str(i) for ct in ChromosomeType}, fitness=i) for i in range(10)]
         new_pop = engine.evolve_population(population)
         
-        assert {agent.fitness for agent in new_pop[:2]} == {9, 8}
+        # Top 2 should be highest fitness agents
+        assert new_pop[0].fitness == 9
+        assert new_pop[1].fitness == 8
     
     def test_invalid_elite_size_raises_error(self):
         config = GeneticConfig(population_size=5, elite_size=10)
@@ -61,9 +65,11 @@ class TestEvolutionEngine:
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
         
+        # Create initial population
         population = [TestAgent({"dna": "test", "meta": "data"}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
         
+        # Verify chromosome types in all offspring
         for agent in new_pop:
-            assert "dna" in agent.chromosomes
-            assert "meta" in agent.chromosomes
+            assert "dna" in agent.chromosomes, "Missing DNA chromosome"
+            assert "meta" in agent.chromosomes, "Missing meta chromosome"
