@@ -31,8 +31,7 @@ class TestStringOptimizationEvaluator:
         ))
         
         evaluator.evaluate([agent])
-        expected_penalty = (35 - 23) * -1.0
-        assert agent.fitness == 25 * 1.0 + expected_penalty
+        assert agent.fitness == 25 * 1.0 + (35 - 23) * -1.0  # 25 a's, 12 over limit
         
     def test_initial_generation(self, config):
         evaluator = StringOptimizationEvaluator(config)

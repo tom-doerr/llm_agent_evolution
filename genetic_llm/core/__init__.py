@@ -41,22 +41,7 @@ def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
 
 class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
-        required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
-        seen_types = set()
-
-        # Validate chromosomes in a single loop
-        for i, chromo in enumerate(chromosomes):
-            if not isinstance(chromo.type, ChromosomeType):
-                raise TypeError(f"Invalid type for chromosome {i}: {type(chromo.type)}")
-            if chromo.type in seen_types:
-                raise ValueError(f"Duplicate type: {chromo.type}")
-            seen_types.add(chromo.type)
-            if len(seen_types) == 3:  # Early exit if all required types found
-                break
-
-        if required_types - seen_types:
-            missing = ', '.join(t.value for t in (required_types - seen_types))
-            raise ValueError(f"Missing chromosome types: {missing}")
+        self._validate_chromosomes(chromosomes)
             
         if not 0.0 <= fitness <= 1.0:
             raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")
@@ -98,13 +83,12 @@ def evolve_population(population: list[Agent], config: GeneticConfig, evaluator:
         
         child = parent1.recombine(parent2)
         
-        # Apply mutation
-        mutated_chromosomes = []
-        for chromo in child.chromosomes:
-            mutated = evaluator.mutate(chromo, config.mutation_rate)
-            mutated_chromosomes.append(mutated)
-        
-        new_population.append(Agent(tuple(mutated_chromosomes)))  # pylint: disable=abstract-class-instantiated
+        # Apply mutation to all chromosomes
+        mutated = tuple(
+            evaluator.mutate(c, config.mutation_rate)
+            for c in child.chromosomes
+        )
+        new_population.append(Agent(mutated))  # pylint: disable=abstract-class-instantiated
     
     return new_population[:config.population_size]
 
