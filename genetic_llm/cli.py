@@ -9,8 +9,23 @@ from .recombination import DSPyRecombiner
 from .cli_abc import CLIEngineABC
 
 class CLIImplementation(CLIEngineABC):
+    """Handles command-line interface for genetic optimization system.
+    
+    Coordinates all components to:
+    - Parse user input parameters
+    - Initialize population with random chromosomes
+    - Run evolution loop for specified generations
+    - Output progress updates
+    """
     def run_evolution(self, generations: int) -> list:
-        # Implementation moved here from click commands
+        """Execute the full evolutionary process:
+        1. Create initial random population
+        2. Evaluate fitness
+        3. Select mates
+        4. Recombine chromosomes
+        5. Mutate offspring
+        6. Repeat for N generations
+        """
         config = GeneticConfig()
         mate_selector = DSPyMateSelector()
         recombiner = DSPyRecombiner()
