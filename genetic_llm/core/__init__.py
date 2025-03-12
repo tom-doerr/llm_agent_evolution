@@ -23,7 +23,7 @@ class Chromosome(NamedTuple):
 
 
 class Agent(AgentABC):
-    def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
+    def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):  # pylint: disable=too-many-locals
         required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
         seen_types = set()
 
