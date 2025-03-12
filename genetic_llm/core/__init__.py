@@ -2,7 +2,6 @@ from typing import NamedTuple
 from pydantic import BaseModel, Field, ConfigDict
 from genetic_llm.core_abc import GeneticConfigABC, AgentABC
 from genetic_llm.core_abc.chromosome_type import ChromosomeType
-from genetic_llm.core_abc.chromosome_type import ChromosomeType
 
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
@@ -27,16 +26,18 @@ class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
         required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
         seen_types = set()
-        
-        for c in chromosomes:
-            if not isinstance(c.type, ChromosomeType):
-                raise TypeError(f"Invalid chromosome type {type(c.type)} - must be ChromosomeType")
-            if c.type in seen_types:
-                raise ValueError(f"Duplicate chromosome type: {c.type}")
-            seen_types.add(c.type)
-        
-        missing = required_types - seen_types
-        if missing:
+
+        # Validate chromosome types and uniqueness
+        for chromo in chromosomes:
+            if not isinstance(chromo.type, ChromosomeType):
+                raise TypeError(f"Invalid chromosome type {type(chromo.type)} - must be ChromosomeType")
+            if chromo.type in seen_types:
+                raise ValueError(f"Duplicate chromosome type: {chromo.type}")
+            seen_types.add(chromo.type)
+
+        # Check required types
+        if not required_types.issubset(seen_types):
+            missing = required_types - seen_types
             raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
             
         if not 0.0 <= fitness <= 1.0:
@@ -49,13 +50,13 @@ class Agent(AgentABC):
         return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
     
     # Implement abstract methods from AgentABC
-    def select_mates(self, population: list[Agent]) -> list[Agent]:
+    def select_mates(self, population: list['Agent']) -> list['Agent']:  # pylint: disable=unused-argument
         """Select mating partners from population"""
         # Implementation left as placeholder since mate selection logic
         # should be in the corresponding chromosome
         return []
 
-    def recombine(self, partner: Agent) -> Agent:
+    def recombine(self, partner: 'Agent') -> 'Agent':  # pylint: disable=unused-argument
         """Recombine with partner agent to produce new offspring"""
         # Implementation left as placeholder since recombination logic
         # should be in the corresponding chromosome

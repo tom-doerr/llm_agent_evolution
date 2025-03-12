@@ -7,7 +7,7 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
     def __init__(self, config: GeneticConfig):
         self.config = config
         
-    def evaluate(self, population: list[Agent]) -> None:
+    def evaluate(self, population: list[Agent]) -> None:  # pylint: disable=too-many-locals
         for agent in population:
             # Get the output string from the task chromosome
             output = next(c.value for c in agent.chromosomes 
