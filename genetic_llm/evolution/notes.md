@@ -1,21 +1,22 @@
 ## Current Implementation Notes
 
-- Parent selection now handles single-parent edge cases
-- Chromosome type preservation verified through enhanced testing
+- Basic mutation operator implemented with configurable rate
+- Mutation applied post-recombination to all chromosomes
+- Mutation tests verify application and rate compliance
 - Elite preservation logic working as intended
 
 ## Known Issues
 
-- No mutation mechanism implemented yet
-- Mate selection could benefit from fitness-aware pairing
-- Small population edge cases need more test coverage
+- Mutation operator needs more sophisticated implementations
+- No crossover/mutation balance tuning
+- Mutation rate not validated in config
 - Chromosome validation needed before recombination
 - No timeout handling for LLM API calls
 
 ## Next Steps
 
-1. Implement mutation operator ← HIGHEST PRIORITY
+1. Implement adaptive mutation rates
 2. Add JSON schema validation for chromosomes
-3. Create integration test with DSPy components
-4. Add timeout handling for model requests
-5. Centralize logging configuration
+3. Create DSPy integration tests
+4. Develop more complex mutation strategies
+5. Add timeout handling for model requests
