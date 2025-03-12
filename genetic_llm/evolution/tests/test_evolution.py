@@ -65,11 +65,10 @@ class TestEvolutionEngine:
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
         
-        # Create initial population
-        population = [TestAgent({"dna": "test", "meta": "data"}) for _ in range(10)]
+        # Create initial population with all chromosome types
+        population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
         
-        # Verify chromosome types in all offspring
+        # Verify all chromosome types exist in all agents
         for agent in new_pop:
-            assert "dna" in agent.chromosomes, "Missing DNA chromosome"
-            assert "meta" in agent.chromosomes, "Missing meta chromosome"
+            assert set(agent.chromosomes.keys()) == set(ChromosomeType)

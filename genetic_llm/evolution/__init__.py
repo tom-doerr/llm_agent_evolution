@@ -27,7 +27,8 @@ class EvolutionEngine(EvolutionEngineABC):
         children = []
         for _ in range(num_children):
             parent1 = self.mate_selector.select(population)
-            parent2 = self.mate_selector.select([a for a in population if a != parent1] or population)
+            remaining = [a for a in population if a != parent1]
+            parent2 = self.mate_selector.select(remaining if remaining else population)
             
             child_chromosomes = {
                 ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
