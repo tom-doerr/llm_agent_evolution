@@ -1,18 +1,17 @@
-# Current Considerations
+## Updated Considerations
 
-## Implementation Notes
-- External LM API dependency introduces potential flakiness
-- Silent error swallowing makes debugging production issues harder
-- String type enforcement prevents complex chromosome structures
+New Implementations:
+- Added retry logic with exponential backoff (3 attempts)
+- Replaced print statements with structured logging
+- Added detailed error context for failed recombinations
 
-## Test Coverage Gaps
-- Real-world LM output validation
-- Performance under load/stress
-- Cross-language compatibility
+Remaining Issues:
+- Still need JSON validation for chromosome structure
+- No performance metrics for retry effectiveness
+- Logging configuration not centralized
 
-## Next Steps
-1. Add integration tests with mocked LM responses
-2. Consider JSON validation for chromosome structure
-3. Implement retry logic for LM calls
-4. Add logging configuration for error tracking
-5. Benchmark different LM providers for recombination quality
+Next Steps:
+1. Implement JSON schema validation for chromosome structure
+2. Add metrics tracking for success/failure rates
+3. Create shared logging configuration
+4. Test with real-world chromosome structures

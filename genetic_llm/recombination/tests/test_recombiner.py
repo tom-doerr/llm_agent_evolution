@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, call, patch
 import dspy
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.recombination_abc import RecombinerABC
@@ -54,3 +54,25 @@ class TestDSPyRecombiner:
         mock_recombine.return_value = mock_response
         recombiner = DSPyRecombiner()
         assert recombiner.combine("A", "B") == ""
+
+    def test_retry_success_after_failures(self, mock_recombine):
+        mock_recombine.side_effect = [
+            Exception("Error 1"),
+            Exception("Error 2"),
+            Mock(child_chromosome="success")
+        ]
+        with patch('time.sleep') as mock_sleep:
+            recombiner = DSPyRecombiner()
+            result = recombiner.combine("A", "B")
+            assert result == "success"
+            assert mock_recombine.call_count == 3
+            mock_sleep.assert_has_calls([call(1), call(2)])
+
+    def test_retry_exhausted(self, mock_recombine):
+        mock_recombine.side_effect = Exception("Persistent error")
+        with patch('time.sleep') as mock_sleep:
+            recombiner = DSPyRecombiner()
+            result = recombiner.combine("A", "B")
+            assert result == ""
+            assert mock_recombine.call_count == 3
+            assert mock_sleep.call_count == 2

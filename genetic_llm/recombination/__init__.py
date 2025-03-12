@@ -1,5 +1,9 @@
+import logging
+import time
 import dspy
 from genetic_llm.recombination_abc import RecombinerABC
+
+logger = logging.getLogger(__name__)
 
 class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
     def __init__(self) -> None:
@@ -12,15 +16,27 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
             raise ValueError("Both parents must be strings")
         if not parent1 and not parent2:
             return ""
-            
-        try:
-            with dspy.context(lm=self.lm):
-                result = self.recombine(
-                    parent1_chromosome=parent1,
-                    parent2_chromosome=parent2
-                )
-            return str(getattr(result, 'child_chromosome', '')) or ''
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            print(f"Recombination error between '{parent1}' and '{parent2}': {str(e)}")
-            return ""
+        
+        max_retries = 3
+        base_delay = 1  # seconds
+        for attempt in range(max_retries):
+            try:
+                with dspy.context(lm=self.lm):
+                    result = self.recombine(
+                        parent1_chromosome=parent1,
+                        parent2_chromosome=parent2
+                    )
+                child = str(getattr(result, 'child_chromosome', '')) or ''
+                return child
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    delay = base_delay * (2 ** attempt)
+                    logger.warning("Recombination attempt %d/%d failed. Retrying in %.1fs. Error: %s",
+                                   attempt + 1, max_retries, delay, e)
+                    time.sleep(delay)
+                else:
+                    logger.error("Recombination failed after %d attempts. Parents: '%s', '%s'. Error: %s",
+                                 max_retries, parent1, parent2, e)
+                    return ""
+        return ""  # Should never be reached
 # Package initialization
