@@ -20,10 +20,10 @@ def timeout_wrapper(func, timeout, params):
         timeout: Maximum execution time in seconds
         params: Tuple containing (args_tuple, kwargs_dict)
     """
-    args, kwargs = params
     outcome = {'result': None, 'error': None}
     
     def worker():
+        args, kwargs = params
         try:
             outcome['result'] = func(*args, **(kwargs or {}))
         except (ValueError, IndexError, TimeoutError) as e:
@@ -36,8 +36,8 @@ def timeout_wrapper(func, timeout, params):
     if thread.is_alive() or not outcome['result']:
         raise SelectionTimeoutError(f"Timeout after {timeout} seconds")
     
-    if outcome['error']:
-        raise outcome['error']
+    if outcome['error'] is not None:
+        raise outcome['error']  # pylint: disable=raising-bad-type
     
     return outcome['result']
 
