@@ -1,9 +1,18 @@
 import logging
+import signal
 import dspy
+from typing import Optional
 from genetic_llm.core import Agent
+from genetic_llm.config import MateSelectionConfig
 from .mate_selection_abc import MateSelector
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class TimeoutError(Exception):
+    pass
+
+def timeout_handler(signum, frame):
+    raise TimeoutError("Model selection timed out")
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:
@@ -20,9 +29,17 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             "population_chromosomes": chromosomes,
             "population_fitness": fitness
         }
-    def __init__(self, model: str = 'openrouter/google/gemini-2.0-flash-001'):
+    def __init__(self, config: Optional[MateSelectionConfig] = None):
         super().__init__()
-        self.lm = dspy.LM(model)
+        self.config = config or MateSelectionConfig()
+        self._setup_logging()
+        self._init_model()
+
+    def _setup_logging(self):
+        logger.setLevel(self.config.log_level)
+
+    def _init_model(self):
+        self.lm = dspy.LM(self.config.model_name)
         self.select_mate = dspy.Predict(
             "population_chromosomes, population_fitness -> selected_index",
             instructions=(
@@ -54,4 +71,44 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             raise IndexError(f"Selected index {index} out of bounds [0-{len(population)-1}]")
             
         return population[index]
+
+    def _validate_index(self, raw_index: str, population_size: int) -> int:
+        try:
+            index_float = float(raw_index.strip())
+            if abs(index_float - round(index_float)) > self.config.require_integer_threshold:
+                raise ValueError(f"Index {index_float} is not close enough to integer")
+                
+            index = int(round(index_float))
+        except (ValueError, TypeError) as e:
+            logger.error("Invalid index conversion: %s", raw_index)
+            raise ValueError(f"Invalid index format: {raw_index}") from e
+
+        if not 0 <= index < population_size:
+            logger.error("Index out of bounds: %d (population size %d)", index, population_size)
+            raise IndexError(f"Index {index} out of range [0-{population_size-1}]")
+            
+        return index
+
+    def select(self, population: list[Agent]) -> Agent:
+        if not population:
+            logger.error("Selection attempted with empty population")
+            raise ValueError("Cannot select from empty population")
+
+        pop_data = self._get_population_data(population)
+        
+        # Set timeout alarm
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(self.config.timeout_seconds)
+        
+        try:
+            with dspy.context(lm=self.lm):
+                prediction = self.select_mate(**pop_data)
+        except TimeoutError:
+            logger.warning("Model selection timed out after %ds", self.config.timeout_seconds)
+            raise
+        finally:
+            signal.alarm(0)  # Disable alarm
+            
+        logger.debug("Raw model response: %s", prediction.selected_index)
+        return population[self._validate_index(prediction.selected_index, len(population))]
 # Package initialization

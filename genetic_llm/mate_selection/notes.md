@@ -2,13 +2,13 @@
 
 ## Current Issues
 
-- Need proper logging implementation instead of print statements
-- Integration tests require API access configuration
-- Float-to-int conversion could still allow invalid indices (e.g. 2.999 -> 2)
+- Timeout handling uses signal which may not work in all environments
+- Need to validate configuration parameters
+- Could add retry logic for timeouts
 
 ## Next Steps
 
-1. Implement proper logging framework
-2. Add configuration system for model parameters
-3. Add timeout handling for model requests
-4. Create validation decorator for agent fitness
+1. Add configuration validation
+2. Implement cross-platform timeout mechanism
+3. Create configuration documentation
+4. Add retry logic for failed model requests
