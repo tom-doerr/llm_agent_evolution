@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Type
+from pydantic import BaseModel
 from .chromosome_type import ChromosomeType
 
 class GeneticConfigABC(ABC):
