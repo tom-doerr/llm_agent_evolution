@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class ChromosomeValidatorABC(ABC):
     @abstractmethod
-    def validate(self, chromosomes: Dict[str, str]) -> bool:
+    def validate(self, chromosomes: Dict[str, str]) -> bool:  # pylint: disable=too-many-locals
         """Validate chromosome structure against schema"""
 
 class JSONSchemaValidator(ChromosomeValidatorABC):

@@ -1,10 +1,12 @@
 import pytest
 from unittest.mock import Mock
+import pytest
 from genetic_llm.evolution import EvolutionEngine
 from genetic_llm.core import GeneticConfig, ChromosomeType
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.evolution_abc import EvolutionEngineABC
+from genetic_llm.validation import JSONSchemaValidator
 
 # Test concrete implementation
 class TestConcreteEvolutionEngine(EvolutionEngine):
@@ -17,6 +19,9 @@ class TestAgent:
         self.fitness = fitness
 
 class TestEvolutionEngineBasics:
+    """Basic engine functionality tests"""
+
+class TestEvolutionValidation:
     def test_implements_abc(self):
         assert issubclass(EvolutionEngine, EvolutionEngineABC)
     def test_evolve_population_size_remains_constant(self):
@@ -50,13 +55,13 @@ class TestEvolutionEngineBasics:
             )
 
     def test_tied_fitness_elite_selection(self):
-        # Add mock mutation operator to constructor
         engine = TestConcreteEvolutionEngine(
             GeneticConfig(population_size=5, elite_size=2), 
-            DSPyMateSelector(), 
-            DSPyRecombiner(), 
+            DSPyMateSelector(),
+            DSPyRecombiner(),
             Mock(),
-            Mock()
+            Mock(),
+            Mock()  # chromosome_validator
         )
         config = GeneticConfig(population_size=5, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
@@ -93,8 +98,13 @@ class TestEvolutionEngineBasics:
         child = next(a for a in new_pop if a not in population[:1])  # Skip elite
         assert "_mutated" in child.chromosomes["dna"]
 
+class TestEvolutionOperations:
+    """Evolution process operation tests"""
+
+    def test_mutation_applied_to_children(self):
+
+class TestValidationMechanisms:
     def test_chromosome_validation(self):
-        from genetic_llm.validation import JSONSchemaValidator
         
         schemas = {
             "dna": {

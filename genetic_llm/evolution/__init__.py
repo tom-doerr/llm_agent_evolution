@@ -4,6 +4,7 @@ from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
 from genetic_llm.evaluator_abc import EvaluatorABC
 from genetic_llm.mutation_abc import MutationOperatorABC
+# pylint: disable=too-many-instance-attributes,too-many-arguments
 from genetic_llm.validation.chromosome_validator import ChromosomeValidatorABC
 
 class EvolutionEngine(EvolutionEngineABC):
