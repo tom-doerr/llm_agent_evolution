@@ -1,5 +1,5 @@
 [MASTER]
-max-module-lines=200
+max-module-lines=100
 
 [DESIGN]
 max-complexity=5
@@ -11,14 +11,14 @@ ignored-modules=dspy
 min-similarity-lines=10
 
 [BASIC]
-max-args=5
-max-locals=10
+max-args=3
+max-locals=5
 max-returns=3
 max-branches=5
 max-statements=30
-max-parents=4
-max-attributes=10
-max-public-methods=8
+max-parents=10
+max-attributes=5
+max-public-methods=5
 
 [FORMAT]
 max-line-length=100
