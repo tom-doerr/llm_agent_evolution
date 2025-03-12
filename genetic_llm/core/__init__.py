@@ -23,26 +23,26 @@ from ..core_abc import AgentABC
 
 class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
-        # Validate chromosome types
-        if not chromosomes:
-            raise ValueError("At least one chromosome required")
-            
+        required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
         seen_types = set()
+        
         for c in chromosomes:
             if not isinstance(c.type, ChromosomeType):
                 raise TypeError(f"Invalid chromosome type {type(c.type)} - must be ChromosomeType")
             if c.type in seen_types:
                 raise ValueError(f"Duplicate chromosome type: {c.type}")
             seen_types.add(c.type)
+        
+        missing = required_types - seen_types
+        if missing:
+            raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
             
-        # Validate fitness range
         if not 0.0 <= fitness <= 1.0:
             raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")
 
-        # Store chromosomes as type:value mapping
-        self.chromosomes = {c.type: c.value for c in chromosomes}
+        self.chromosomes = chromosomes
         self.fitness = fitness
         
     def __repr__(self) -> str:
-        return f"Agent(fitness={self.fitness:.2f}, chromosomes={list(self.chromosomes.keys())})"
+        return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
 
