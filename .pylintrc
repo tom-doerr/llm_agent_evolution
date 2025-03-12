@@ -1,0 +1,31 @@
+[MASTER]
+max-module-lines=200
+
+[DESIGN]
+max-complexity=5
+max-args=5
+max-locals=10
+max-returns=3
+max-branches=5
+max-statements=30
+max-parents=4
+max-attributes=10
+max-public-methods=8
+
+[FORMAT]
+max-line-length=100
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    import-error,
+    wrong-import-order,
+    line-too-long,
+    trailing-whitespace,
+    trailing-newlines
+
+[REPORTS]
+output-format=colorized
