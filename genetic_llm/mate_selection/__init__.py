@@ -1,5 +1,5 @@
 import dspy
-from genetic_llm.core import MateSelector
+from genetic_llm.mate_selection_abc import MateSelector
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def __init__(self):

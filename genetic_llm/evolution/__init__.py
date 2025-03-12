@@ -1,5 +1,7 @@
 from typing import List
-from .core import Agent, GeneticConfig, MateSelector, RecombinerABC
+from .core import Agent, GeneticConfig
+from genetic_llm.mate_selection_abc import MateSelector
+from genetic_llm.recombination_abc import RecombinerABC
 
 class EvolutionEngine:
     def __init__(self, config: GeneticConfig, 

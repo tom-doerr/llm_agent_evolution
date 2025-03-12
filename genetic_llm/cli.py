@@ -12,8 +12,10 @@ def main():
 def evolve(generations):
     config = GeneticConfig()
     # Inject implementations
-    mate_selector = MateSelector()
-    recombiner = Recombiner()
+    from .mate_selection import DSPyMateSelector
+    from .recombination import DSPyRecombiner
+    mate_selector = DSPyMateSelector()
+    recombiner = DSPyRecombiner()
     engine = EvolutionEngine(config, mate_selector, recombiner)
     
     # Initialize random population

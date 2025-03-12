@@ -18,13 +18,3 @@ class Agent:
         self.chromosomes = chromosomes
         self.fitness: float = 0.0
 
-# Interface contracts
-class MateSelector(ABC):
-    @abstractmethod
-    def select(self, population: List['Agent']) -> 'Agent':
-        """Select a mate from population based on strategy"""
-        
-class RecombinerABC(ABC):
-    @abstractmethod
-    def combine(self, parent1: str, parent2: str) -> str:
-        """Combine two chromosome strings into new offspring"""
