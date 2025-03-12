@@ -37,16 +37,20 @@ class TestDSPyRecombiner:
         with pytest.raises(ValueError):
             recombiner.combine(123, "abc")
 
-    def test_combine_one_empty_parent(self, mock_recombine):
+    @pytest.mark.parametrize("parent1, parent2", [
+        ("", "valid"),
+        ("valid", "")
+    ])
+    def test_combine_with_empty_parent(self, mock_recombine, parent1, parent2):
         mock_recombine.return_value = Mock(child_chromosome="hybrid")
         recombiner = DSPyRecombiner()
-        assert recombiner.combine("", "valid") == "hybrid"
-        assert recombiner.combine("valid", "") == "hybrid"
+        assert recombiner.combine(parent1, parent2) == "hybrid"
 
-    def test_combine_unexpected_lm_output(self, mock_recombine):
-        mock_recombine.return_value = Mock(child_chromosome=None)
+    @pytest.mark.parametrize("mock_response", [
+        {"child_chromosome": None},
+        Mock(spec=[])
+    ])
+    def test_combine_unexpected_lm_output(self, mock_recombine, mock_response):
+        mock_recombine.return_value = mock_response
         recombiner = DSPyRecombiner()
-        assert recombiner.combine("A", "B") == ""
-        
-        mock_recombine.return_value = Mock(spec=[])
         assert recombiner.combine("A", "B") == ""
