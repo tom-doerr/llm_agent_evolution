@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 import logging
 import signal
 import dspy
@@ -8,7 +9,8 @@ from .mate_selection_abc import MateSelector
 
 logger = logging.getLogger(__name__)
 
-class TimeoutError(Exception):
+class SelectionTimeoutError(Exception):
+    """Custom timeout exception to avoid built-in conflict"""
     pass
 
 def timeout_handler(signum, frame):
@@ -49,30 +51,8 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             )
         )
 
-    def select(self, population: list[Agent]) -> Agent:
-        if not population:
-            raise ValueError("Cannot select from empty population")
 
-        # Extract population data with validation
-        pop_data = self._get_population_data(population)
-        
-        with dspy.context(lm=self.lm):
-            prediction = self.select_mate(**pop_data)
-        
-        # Log raw model response
-        logging.debug("Model selection response: %s", prediction.selected_index)
-        
-        try:
-            index = int(float(prediction.selected_index.strip()))
-        except (ValueError, TypeError) as e:
-            raise ValueError(f"Invalid index returned by model: {prediction.selected_index}") from e
-            
-        if not 0 <= index < len(population):
-            raise IndexError(f"Selected index {index} out of bounds [0-{len(population)-1}]")
-            
-        return population[index]
-
-    def _validate_index(self, raw_index: str, population_size: int) -> int:
+    def _validate_index(self, raw_index: str, population_size: int) -> int:  # pylint: disable=too-many-locals
         try:
             index_float = float(raw_index.strip())
             if abs(index_float - round(index_float)) > self.config.require_integer_threshold:
@@ -89,7 +69,7 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             
         return index
 
-    def select(self, population: list[Agent]) -> Agent:
+    def select(self, population: list[Agent]) -> Agent:  # pylint: disable=too-many-locals
         if not population:
             logger.error("Selection attempted with empty population")
             raise ValueError("Cannot select from empty population")
