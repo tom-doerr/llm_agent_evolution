@@ -22,17 +22,15 @@ class TestStringOptimizationEvaluator:
         assert agent.fitness == pytest.approx((7 * 1.0) + (0 * -1.0))
         
     def test_length_penalty(self, config):
-        long_string = "a" * 35
         evaluator = StringOptimizationEvaluator(config)
         agent = Agent((  # pylint: disable=abstract-class-instantiated
-            Chromosome(ChromosomeType.TASK, long_string),
+            Chromosome(ChromosomeType.TASK, "a" * 35),
             Chromosome(ChromosomeType.MATE_SELECTION, "test"),
             Chromosome(ChromosomeType.RECOMBINATION, "test")
         ))
         
         evaluator.evaluate([agent])
-        expected = (35 * 1.0) + (12 * -1.0)  # 35 a's, 12 over limit
-        assert agent.fitness == pytest.approx(expected)
+        assert agent.fitness == pytest.approx(35.0 - 12.0)  # 35 a's (1.0 each), 12 over limit (-1.0 each)
         
     def test_initial_generation(self, config):
         evaluator = StringOptimizationEvaluator(config)
