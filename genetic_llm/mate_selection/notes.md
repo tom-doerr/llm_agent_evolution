@@ -1,8 +1,8 @@
 ## Current Issues
 
-1.  Model could return float values that truncate to valid indices
-2.  No validation that fitness values are set before selection
-3.  Model instructions could be more precise about integer requirement
+1. Model could return float values that truncate to valid indices
+2. No validation that fitness values are set before selection
+3. Model instructions could be more precise about integer requirement
 
 ## Next Steps
 
