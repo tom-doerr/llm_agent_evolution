@@ -16,7 +16,7 @@ class TestAgent:  # pylint: disable=too-many-public-methods
 
     def test_agent_requires_all_chromosome_types(self):
         with pytest.raises(ValueError):
-            Agent((
+            Agent((  # pylint: disable=abstract-class-instantiated
                 Chromosome(ChromosomeType.TASK, "test"),
                 Chromosome(ChromosomeType.MATE_SELECTION, "test")
             ))
@@ -29,14 +29,14 @@ class TestAgent:  # pylint: disable=too-many-public-methods
         )
         
         with pytest.raises(ValueError):
-            Agent(valid_chromosomes, fitness=-0.1)
+            Agent(valid_chromosomes, fitness=-0.1)  # pylint: disable=abstract-class-instantiated
             
         with pytest.raises(ValueError):
-            Agent(valid_chromosomes, fitness=1.1)
+            Agent(valid_chromosomes, fitness=1.1)  # pylint: disable=abstract-class-instantiated
 
     def test_duplicate_chromosome_types(self):
         with pytest.raises(ValueError):
-            Agent((
+            Agent((  # pylint: disable=abstract-class-instantiated
                 Chromosome(ChromosomeType.TASK, "t1"),
                 Chromosome(ChromosomeType.TASK, "t2"),
                 Chromosome(ChromosomeType.MATE_SELECTION, "ms"),
@@ -44,7 +44,7 @@ class TestAgent:  # pylint: disable=too-many-public-methods
             ))
 
     def test_repr_representation(self):
-        agent = Agent((
+        agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "t"),
             Chromosome(ChromosomeType.MATE_SELECTION, "ms"),
             Chromosome(ChromosomeType.RECOMBINATION, "r"),
@@ -56,12 +56,12 @@ class TestAgent:  # pylint: disable=too-many-public-methods
         assert "RECOMBINATION" in repr(agent)
 
     def test_genetic_operations(self):
-        parent1 = Agent((
+        parent1 = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "aaaa"),
             Chromosome(ChromosomeType.MATE_SELECTION, "tournament_selection"),
             Chromosome(ChromosomeType.RECOMBINATION, "single_point_crossover"),
         ))
-        parent2 = Agent((
+        parent2 = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "bbbb"),
             Chromosome(ChromosomeType.MATE_SELECTION, "tournament_selection"),
             Chromosome(ChromosomeType.RECOMBINATION, "single_point_crossover"),
