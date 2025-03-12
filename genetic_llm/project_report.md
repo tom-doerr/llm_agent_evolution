@@ -8,7 +8,7 @@ Framework for evolving LLM-based agents through genetic algorithms, implementing
 - Extensible fitness evaluation system
 
 ## Key Features
-✅ Implemented:
+[DONE] Implemented:
 - Chromosome structure separating Task, Mate Selection, and Recombination logic
 - Tournament selection and single-point crossover mechanisms
 - DSPy-powered mate selection and recombination modules
