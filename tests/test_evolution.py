@@ -22,23 +22,23 @@ def test_evolve_population():
 
     # Create an initial population with decreasing fitness values
     population = []
-    for i in range(config.population_size):
+    for i in range(engine.config.population_size):
         chromosomes = {
             ChromosomeType.TASK: f"task_{i}",
             ChromosomeType.MATE_SELECTION: f"mate_{i}",
             ChromosomeType.RECOMBINATION: f"recomb_{i}"
         }
         agent = Agent(chromosomes)
-        agent.fitness = config.population_size - i  # Higher fitness for lower i values
+        agent.fitness = engine.config.population_size - i  # Higher fitness for lower i values
         population.append(agent)
 
     new_population = engine.evolve_population(population)
 
     # Verify that the evolved population has the correct size
-    assert len(new_population) == config.population_size
+    assert len(new_population) == engine.config.population_size
 
     # Verify that elite agents (the highest fitness ones) are preserved in the new population
     sorted_population = sorted(population, key=lambda a: a.fitness, reverse=True)
-    elites = sorted_population[:config.elite_size]
+    elites = sorted_population[:engine.config.elite_size]
     for elite in elites:
         assert elite in new_population
