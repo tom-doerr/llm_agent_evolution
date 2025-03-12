@@ -1,7 +1,10 @@
 import pytest
 from genetic_llm.core import Agent, ChromosomeType
+from genetic_llm.core_abc import AgentABC
 
 class TestAgent:
+    def test_implements_abc(self):
+        assert issubclass(Agent, AgentABC)
     def test_agent_creation_with_valid_chromosomes(self):
         agent = Agent({
             ChromosomeType.TASK: "test",

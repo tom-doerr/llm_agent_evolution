@@ -1,7 +1,10 @@
 import pytest
 from genetic_llm.recombination import DSPyRecombiner
+from genetic_llm.recombination_abc import RecombinerABC
 
 class TestDSPyRecombiner:
+    def test_implements_abc(self):
+        assert issubclass(DSPyRecombiner, RecombinerABC)
     def test_combine_valid_parents(self) -> None:
         recombiner = DSPyRecombiner()
         parent_a = "ABCDEF"
