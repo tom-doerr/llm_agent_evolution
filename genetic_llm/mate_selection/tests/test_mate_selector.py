@@ -1,14 +1,22 @@
 import pytest
 import dspy
 from unittest import mock
-from genetic_llm.mate_selection import DSPyMateSelector
+from genetic_llm.mate_selection import DSPyMateSelector, MateSelector
 from genetic_llm.core import Agent
 
-# Concrete test implementation
+# Concrete test implementation with required abstract methods
 class TestAgent(Agent):
     def __init__(self, chromosomes):
         super().__init__(chromosomes)
-from genetic_llm.mate_selection import MateSelector
+        self._fitness = 0.0  # Add concrete fitness attribute
+    
+    @property
+    def fitness(self):
+        return self._fitness
+    
+    @fitness.setter
+    def fitness(self, value):
+        self._fitness = value
 
 class TestDSPyMateSelector:
     def test_implements_abc(self):
