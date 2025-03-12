@@ -1,6 +1,7 @@
 import logging
 import time
 import dspy
+from abc import ABCMeta
 from genetic_llm.recombination_abc import RecombinerABC
 
 logger = logging.getLogger(__name__)
