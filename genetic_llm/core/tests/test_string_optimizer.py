@@ -41,3 +41,15 @@ class TestStringOptimizationEvaluator:
         assert 15 <= len(initial.value) <= 30
         assert any(c == 'a' for c in initial.value.lower())
         assert initial.type == ChromosomeType.TASK
+
+    def test_mutation(self, config):
+        evaluator = StringOptimizationEvaluator(config)
+        original = Chromosome(ChromosomeType.TASK, "aaaaaaaaaa")
+        
+        # Test with high mutation rate
+        mutated = evaluator.mutate(original, 0.8)
+        assert mutated.value != original.value
+        assert len(mutated.value) >= 9  # Allow length changes
+        
+        # Test type preservation
+        assert mutated.type == ChromosomeType.TASK

@@ -40,3 +40,24 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
         vowels = ['a' if random.random() < 0.3 else chr(random.randint(97,122)) 
                 for _ in range(length)]
         return Chromosome(ChromosomeType.TASK, ''.join(vowels))
+
+    def mutate(self, chromosome: Chromosome, mutation_rate: float) -> Chromosome:
+        """Mutate a string chromosome with character flips and length changes"""
+        if chromosome.type != ChromosomeType.TASK:
+            return chromosome  # Only mutate task chromosomes
+        
+        chars = list(chromosome.value)
+        
+        # Character mutations
+        for i in range(len(chars)):
+            if random.random() < mutation_rate:
+                chars[i] = random.choice('abcdefghijklmnopqrstuvwxyz')
+        
+        # Length mutation (10% chance to add/remove)
+        if random.random() < 0.1:
+            if random.random() < 0.5 and len(chars) > 1:
+                chars.pop(random.randint(0, len(chars)-1))
+            else:
+                chars.append(random.choice('abcdefghijklmnopqrstuvwxyz'))
+        
+        return Chromosome(chromosome.type, ''.join(chars))

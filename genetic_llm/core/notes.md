@@ -1,11 +1,10 @@
 ## Current Issues
-
-- Fitness normalization needs more sophisticated scaling  
-- Limited mutation implementation  
-- Selection pressure not configurable  
+- Mutation operator needs parameter tuning
+- No crossover for strategy chromosomes (mate selection/recombination)
+- Fitness landscape could be more nuanced
 
 ## Next Steps
-1. Add mutation operators
-2. Implement different selection strategies
-3. Add elitism mechanism
-4. Create CLI runner for experiments
+1. Implement roulette wheel selection
+2. Add chromosome crossover for strategy genes
+3. Create baseline experiment runner
+4. Add population initialization tests

@@ -76,3 +76,28 @@ def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
                               if c.type == ChromosomeType.RECOMBINATION)
         return globals()[recombinator_name](self, partner)
 
+def evolve_population(population: list[Agent], config: GeneticConfig, evaluator: PopulationEvaluatorABC) -> list[Agent]:
+    new_population = []
+    
+    # Preserve elites
+    elites = sorted(population, key=lambda a: a.fitness, reverse=True)[:config.elite_size]
+    new_population.extend(elites)
+    
+    # Breed remaining population
+    while len(new_population) < config.population_size:
+        parent1 = random.choice(elites if elites else population)
+        mates = parent1.select_mates(population)
+        parent2 = random.choice(mates)
+        
+        child = parent1.recombine(parent2)
+        
+        # Apply mutation
+        mutated_chromosomes = []
+        for chromo in child.chromosomes:
+            mutated = evaluator.mutate(chromo, config.mutation_rate)
+            mutated_chromosomes.append(mutated)
+        
+        new_population.append(Agent(tuple(mutated_chromosomes)))
+    
+    return new_population[:config.population_size]
+
