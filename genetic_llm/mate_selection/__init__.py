@@ -5,6 +5,7 @@ from .mate_selection_abc import MateSelector
 
 logging.basicConfig(level=logging.INFO)
 
+class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:
         """Validate and extract population data for model input."""
         chromosomes = []
@@ -19,8 +20,6 @@ logging.basicConfig(level=logging.INFO)
             "population_chromosomes": chromosomes,
             "population_fitness": fitness
         }
-
-class DSPyMateSelector(MateSelector, dspy.Module):
     def __init__(self, model: str = 'openrouter/google/gemini-2.0-flash-001'):
         super().__init__()
         self.lm = dspy.LM(model)
