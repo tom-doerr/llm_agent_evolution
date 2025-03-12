@@ -78,10 +78,16 @@ class Agent(AgentABC):
         return globals()[recombinator_name](self, partner)
 
 def evolve_population(population: list[Agent], config: GeneticConfig, evaluator: PopulationEvaluatorABC) -> list[Agent]:
+    if not population:
+        raise ValueError("Cannot evolve empty population")
+    
     new_population = []
     
-    # Preserve elites
-    elites = sorted(population, key=lambda a: a.fitness, reverse=True)[:config.elite_size]
+    # Preserve elites with safety check
+    try:
+        elites = sorted(population, key=lambda a: a.fitness, reverse=True)[:config.elite_size]
+    except KeyError as e:
+        raise RuntimeError("Population contains agents with invalid fitness values") from e
     new_population.extend(elites)
     
     # Breed remaining population

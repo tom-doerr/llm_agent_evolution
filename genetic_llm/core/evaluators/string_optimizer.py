@@ -56,6 +56,9 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
         # Length mutation with simplified logic
         if random.random() < 0.1:
             modify_len = random.random() < 0.5 and len(chars) > 1
-            chars.pop(random.randint(0, len(chars)-1)) if modify_len else chars.append(random.choice('abcdefghijklmnopqrstuvwxyz'))
+            if modify_len and len(chars) > 1:
+                chars.pop(random.randint(0, len(chars)-1))
+            else:
+                chars.append(random.choice('abcdefghijklmnopqrstuvwxyz'))
         
         return Chromosome(chromosome.type, ''.join(chars))

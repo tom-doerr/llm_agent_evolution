@@ -22,6 +22,7 @@ class TestStringOptimizationEvaluator:
         assert agent.fitness == (8 * 1.0) + (0 * -1.0)  # 8 a's, 8 chars under limit
         
     def test_length_penalty(self, config):
+        long_string = "a" * 35
         evaluator = StringOptimizationEvaluator(config)
         agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, long_string),

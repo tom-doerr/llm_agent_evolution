@@ -5,6 +5,8 @@ from genetic_llm.core_abc import AgentABC
 class TestAgent:  # pylint: disable=too-many-public-methods
     def test_implements_abc(self):
         assert issubclass(Agent, AgentABC)
+        assert 'select_mates' in Agent.__abstractmethods__
+        assert 'recombine' in Agent.__abstractmethods__
     def test_agent_creation_with_valid_chromosomes(self):
         agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "test"),
