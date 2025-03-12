@@ -1,4 +1,5 @@
 ## Current Issues
+
 - Mutation operator needs parameter tuning
 - No crossover for strategy chromosomes (mate selection/recombination)
 - Fitness landscape could be more nuanced

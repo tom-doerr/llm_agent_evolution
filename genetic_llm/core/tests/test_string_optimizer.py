@@ -1,7 +1,6 @@
 import pytest
 from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
 from genetic_llm.core import GeneticConfig, Agent, ChromosomeType, Chromosome
-from genetic_llm.core import GeneticConfig, Agent, ChromosomeType, Chromosome
 
 class TestStringOptimizationEvaluator:
     @pytest.fixture

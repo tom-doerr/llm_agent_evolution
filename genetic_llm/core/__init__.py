@@ -1,6 +1,6 @@
 from typing import NamedTuple
 from pydantic import BaseModel, Field, ConfigDict
-from genetic_llm.core_abc import GeneticConfigABC, AgentABC
+from genetic_llm.core_abc import GeneticConfigABC, AgentABC, PopulationEvaluatorABC
 from genetic_llm.core_abc.chromosome_type import ChromosomeType
 import random
 
@@ -66,6 +66,34 @@ def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
         parent1.chromosomes[1],
         parent1.chromosomes[2],
     ))
+
+class Agent(AgentABC):
+    def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
+        required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
+        seen_types = set()
+
+        # Validate chromosome types and uniqueness
+        for chromo in chromosomes:
+            if not isinstance(chromo.type, ChromosomeType):
+                raise TypeError(f"Invalid chromosome type {type(chromo.type)} - must be ChromosomeType")
+            if chromo.type in seen_types:
+                raise ValueError(f"Duplicate chromosome type: {chromo.type}")
+            seen_types.add(chromo.type)
+
+        # Check required types
+        if not required_types.issubset(seen_types):
+            missing = required_types - seen_types
+            raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
+            
+        if not 0.0 <= fitness <= 1.0:
+            raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")
+
+        self.chromosomes = chromosomes
+        self.fitness = fitness
+        
+    def __repr__(self) -> str:
+        return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
+    
     def select_mates(self, population: list['Agent']) -> list['Agent']:
         selector_name = next(c.value for c in self.chromosomes 
                           if c.type == ChromosomeType.MATE_SELECTION)
