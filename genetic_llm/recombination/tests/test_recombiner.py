@@ -3,6 +3,7 @@ from unittest.mock import Mock, call, patch
 import dspy
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.recombination_abc import RecombinerABC
+from genetic_llm.recombination.schemas import validate_chromosome
 
 @pytest.fixture(name="mock_recombine_fixture")
 def mock_recombine_fixture(monkeypatch):

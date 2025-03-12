@@ -1,8 +1,10 @@
 import logging
 import time
 import dspy
+import json
 from abc import ABCMeta
 from genetic_llm.recombination_abc import RecombinerABC
+from .schemas import validate_chromosome
 
 logger = logging.getLogger(__name__)
 
@@ -39,20 +41,17 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
         return self._parse_result(result)
 
     def _parse_result(self, result) -> str:
-        child_raw = getattr(result, 'child_chromosome', '')
-        child_str = str(child_raw).strip()
-        
+        child_str = str(getattr(result, 'child_chromosome', '')).strip()
         if not child_str:
             return ""
-        
+
         try:
-            from .schemas import validate_chromosome
-            if validate_chromosome(child_str):
-                return child_str
-            logger.error("Chromosome validation failed: %s", child_str)
-            return ""
+            return child_str if validate_chromosome(child_str) else ""
         except Exception as e:  # pylint: disable=broad-except
             logger.warning("Validation error: %s", e)
+            return ""
+        except ValidationError:
+            logger.error("Chromosome validation failed: %s", child_str)
             return ""
 
     def _handle_retry_error(self, attempt: int, error: Exception) -> None:
