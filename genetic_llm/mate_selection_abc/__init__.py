@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from ..core import Agent
+from genetic_llm.core import Agent
 
 class MateSelector(ABC):
     @abstractmethod

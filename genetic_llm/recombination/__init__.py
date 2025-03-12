@@ -1,5 +1,5 @@
 import dspy
-from ..recombination_abc import RecombinerABC
+from genetic_llm.recombination_abc import RecombinerABC
 
 class DSPyRecombiner(RecombinerABC, dspy.Module):
     def __init__(self):

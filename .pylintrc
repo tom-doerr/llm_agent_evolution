@@ -2,7 +2,7 @@
 max-module-lines=200
 
 [DESIGN]
-max-complexity=5
+max-cyclomatic-complexity=5
 min-similarity-lines=10
 max-args=5
 max-locals=10
