@@ -13,27 +13,33 @@ logger = logging.getLogger(__name__)
 class SelectionTimeoutError(Exception):
     """Custom timeout exception for selection operations"""
 
-def timeout_wrapper(func, timeout, args=(), *, kwargs=None):
-    """Cross-platform timeout decorator implementation"""
-    outcome = []
+def timeout_wrapper(func, timeout, params):
+    """Cross-platform timeout decorator implementation
+    Args:
+        func: Callable to execute
+        timeout: Maximum execution time in seconds
+        params: Tuple containing (args_tuple, kwargs_dict)
+    """
+    args, kwargs = params
+    outcome = {'result': None, 'error': None}
     
     def worker():
         try:
-            outcome.append(func(*args, **(kwargs or {})))
+            outcome['result'] = func(*args, **(kwargs or {}))
         except (ValueError, IndexError, TimeoutError) as e:
-            outcome.append(e)
+            outcome['error'] = e
     
     thread = threading.Thread(target=worker)
     thread.start()
     thread.join(timeout)
     
-    if thread.is_alive():
+    if thread.is_alive() or not outcome['result']:
         raise SelectionTimeoutError(f"Timeout after {timeout} seconds")
     
-    if not outcome or isinstance(outcome[0], Exception):
-        raise outcome[0] if outcome else SelectionTimeoutError(f"Timeout after {timeout} seconds")
+    if outcome['error']:
+        raise outcome['error']
     
-    return outcome[0]
+    return outcome['result']
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:
@@ -99,9 +105,9 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         while True:
             try:
                 return timeout_wrapper(
-                    self._execute_selection,
+                    self._execute_selection, 
                     self.config.timeout_seconds,
-                    args=(pop_data, len(population))
+                    (pop_data, len(population))
                 )
             except (SelectionTimeoutError, ValueError, IndexError) as e:
                 attempts += 1
