@@ -34,3 +34,30 @@ class TestEvolutionEngine:
         
         with pytest.raises(ValueError):
             engine.evolve_population(population)
+
+    def test_tied_fitness_elite_selection(self):
+        config = GeneticConfig(population_size=5, elite_size=2)
+        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner())
+        
+        population = [
+            Agent({"dna": "A"}, fitness=10),
+            Agent({"dna": "B"}, fitness=10),  # Tie for first
+            Agent({"dna": "C"}, fitness=5),
+            Agent({"dna": "D"}, fitness=5),
+            Agent({"dna": "E"}, fitness=1)
+        ]
+        new_pop = engine.evolve_population(population)
+        
+        # Should preserve both top 10 fitness agents
+        assert sum(1 for a in new_pop if a.fitness == 10) == 2
+
+    def test_chromosome_types_preserved(self):
+        config = GeneticConfig(population_size=10, elite_size=2)
+        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner())
+        
+        population = [Agent({"dna": "test", "meta": "data"}) for _ in range(10)]
+        new_pop = engine.evolve_population(population)
+        
+        for agent in new_pop:
+            assert "dna" in agent.chromosomes
+            assert "meta" in agent.chromosomes

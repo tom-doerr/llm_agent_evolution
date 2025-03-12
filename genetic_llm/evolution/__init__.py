@@ -30,8 +30,8 @@ class EvolutionEngine(EvolutionEngineABC):
         for _ in range(num_children):
             parents = [self.mate_selector.select(population) for _ in range(2)]
             child_chromosomes = {
-                ct: self.recombiner.combine(p1.chromosomes[ct], p2.chromosomes[ct])
-                for ct, p1, p2 in zip(parents[0].chromosomes, parents, parents[1:])
+                ct: self.recombiner.combine(parents[0].chromosomes[ct], parents[1].chromosomes[ct])
+                for ct in parents[0].chromosomes  # Use first parent's chromosome types
             }
             children.append(Agent(child_chromosomes))
         
