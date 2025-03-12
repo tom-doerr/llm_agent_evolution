@@ -11,10 +11,9 @@ logger = logging.getLogger(__name__)
 
 class SelectionTimeoutError(Exception):
     """Custom timeout exception to avoid built-in conflict"""
-    pass
 
 def timeout_handler(signum, frame):
-    raise TimeoutError("Model selection timed out")
+    raise SelectionTimeoutError("Model selection timed out")
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:

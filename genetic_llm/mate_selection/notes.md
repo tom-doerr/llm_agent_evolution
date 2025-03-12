@@ -2,7 +2,6 @@
 
 ## Current Issues
 
-<!-- lint disable list-item-bullet-indent -->
 - Timeout handling uses signal which may not work in all environments
 - Need to validate configuration parameters
 - Could add retry logic for timeouts
