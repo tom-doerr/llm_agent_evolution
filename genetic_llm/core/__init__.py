@@ -31,22 +31,6 @@ class Chromosome(NamedTuple):
 
 
 
-def tournament_selection(population: list[Agent], agent: Agent) -> list[Agent]:
-    """Select top 25% performers (ignoring agent parameter)"""
-    k = max(2, len(population) // 4)
-    return sorted(population, key=lambda a: a.fitness, reverse=True)[:k]
-
-def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
-    """Combine task chromosomes from both parents"""
-    t1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK).value
-    t2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK).value
-    crossover_point = len(t1) // 2
-    return Agent((  # pylint: disable=abstract-class-instantiated
-        Chromosome(ChromosomeType.TASK, t1[:crossover_point] + t2[crossover_point:]),
-        parent1.chromosomes[1],
-        parent1.chromosomes[2],
-    ))
-
 class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
         self._validate_chromosomes(chromosomes)
