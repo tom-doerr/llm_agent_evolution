@@ -1,3 +1,5 @@
+# Project Notes
+
 ## Current Issues
 
 - Need proper logging implementation instead of print statements

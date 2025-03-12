@@ -1,9 +1,24 @@
 import logging
 import dspy
-
-logging.basicConfig(level=logging.INFO)
 from genetic_llm.core import Agent
 from .mate_selection_abc import MateSelector
+
+logging.basicConfig(level=logging.INFO)
+
+    def _get_population_data(self, population: list[Agent]) -> dict:
+        """Validate and extract population data for model input."""
+        chromosomes = []
+        fitness = []
+        for agent in population:
+            if not hasattr(agent, 'fitness') or agent.fitness is None:
+                raise ValueError(f"Agent {agent} missing required fitness value")
+            chromosomes.append(agent.chromosomes)
+            fitness.append(agent.fitness)
+        
+        return {
+            "population_chromosomes": chromosomes,
+            "population_fitness": fitness
+        }
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def __init__(self, model: str = 'openrouter/google/gemini-2.0-flash-001'):
@@ -21,20 +36,12 @@ class DSPyMateSelector(MateSelector, dspy.Module):
     def select(self, population: list[Agent]) -> Agent:
         if not population:
             raise ValueError("Cannot select from empty population")
-            
-        population_chromosomes = []
-        population_fitness = []
-        for agent in population:
-            if not hasattr(agent, 'fitness') or agent.fitness is None:
-                raise ValueError(f"Agent {agent} missing required fitness value")
-            population_chromosomes.append(agent.chromosomes)
-            population_fitness.append(agent.fitness)
+
+        # Extract population data with validation
+        pop_data = self._get_population_data(population)
         
         with dspy.context(lm=self.lm):
-            prediction = self.select_mate(
-                population_chromosomes=population_chromosomes,
-                population_fitness=population_fitness
-            )
+            prediction = self.select_mate(**pop_data)
         
         # Log raw model response
         logging.debug("Model selection response: %s", prediction.selected_index)

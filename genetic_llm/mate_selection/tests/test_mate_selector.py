@@ -19,7 +19,8 @@ class TestAgent(Agent):
     def fitness(self, value):
         self._fitness = value
 
-class TestDSPyMateSelector:
+class TestDSPyMateSelectorBasic:
+    """Basic functionality tests"""
     def test_select_returns_valid_agent(self):
         assert issubclass(DSPyMateSelector, MateSelector), "Must implement MateSelector ABC"
         selector = DSPyMateSelector()
@@ -99,6 +100,9 @@ class TestDSPyMateSelector:
         except (ValueError, IndexError) as e:
             pytest.fail(f"Integration test failed with real model: {str(e)}")
 
+class TestDSPyMateSelectorParametrized:
+    """Parameterized test cases"""
+    
     def test_input_data_format(self):
         selector = DSPyMateSelector()
         agents = [
