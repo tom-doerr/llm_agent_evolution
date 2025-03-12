@@ -21,6 +21,8 @@ class TestDSPyRecombiner:
     def test_combine_mixed_parents(self) -> None:
         recombiner = DSPyRecombiner()
         child = recombiner.combine("123", "abc")
+        assert isinstance(child, str)
+        assert len(child) > 0
 
     def test_invalid_input_types(self) -> None:
         recombiner = DSPyRecombiner()
