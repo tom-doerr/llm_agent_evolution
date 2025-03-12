@@ -22,8 +22,8 @@ class DSPyRecombiner(RecombinerABC, dspy.Module):
                     parent2_chromosome=parent2
                 )
             return getattr(result, 'child_chromosome', '')
-        except Exception as e:
-            # Log error and return empty string
+        except RuntimeError as e:
+            # Log execution errors from LM/DSPy and return empty string
             print(f"Recombination error: {str(e)}")
             return ""
 # Package initialization
