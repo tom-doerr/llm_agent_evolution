@@ -8,8 +8,7 @@ from genetic_llm.evolution_abc import EvolutionEngineABC
 
 # Test concrete implementation
 class TestConcreteEvolutionEngine(EvolutionEngine):
-    """Concrete implementation for testing abstract base class functionality"""
-    pass  # No abstract methods need implementation since parent is concrete
+    """Concrete implementation for testing abstract base class functionality""" 
 
 # Test double for abstract Agent class
 class TestAgent:
@@ -17,7 +16,7 @@ class TestAgent:
         self.chromosomes = chromosomes
         self.fitness = fitness
 
-class TestEvolutionEngine:
+class TestEvolutionEngineBasics:
     def test_implements_abc(self):
         assert issubclass(EvolutionEngine, EvolutionEngineABC)
     def test_evolve_population_size_remains_constant(self):
@@ -29,8 +28,12 @@ class TestEvolutionEngine:
     
     def test_elites_are_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
-        mock_evaluator = Mock()
-        engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), mock_evaluator)
+        engine = TestConcreteEvolutionEngine(
+            config, 
+            DSPyMateSelector(),
+            DSPyRecombiner(),
+            Mock()
+        )
         
         # Create population with ascending fitness
         population = [TestAgent({ct: str(i) for ct in ChromosomeType}, fitness=i) for i in range(10)]
@@ -61,6 +64,7 @@ class TestEvolutionEngine:
         # Should preserve both top 10 fitness agents
         assert sum(1 for a in new_pop if a.fitness == 10) == 2
 
+class TestEvolutionEngineSemantics:
     def test_chromosome_types_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())

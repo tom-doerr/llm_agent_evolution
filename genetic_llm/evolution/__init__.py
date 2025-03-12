@@ -3,7 +3,7 @@ from genetic_llm.core_abc import AgentABC
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
-from genetic_llm.evaluator_abc import EvaluatorABC
+from genetic_llm.evaluator_abc import EvaluatorABC  # Keep import since it's used in type hints
 
 class EvolutionEngine(EvolutionEngineABC):
     def __init__(self, 
@@ -34,7 +34,7 @@ class EvolutionEngine(EvolutionEngineABC):
                 ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
                 for ct in parent1.chromosomes.keys()
             }
-            children.append(Agent(child_chromosomes))
+            children.append(Agent(child_chromosomes))  # Agent is concrete despite ABC inheritance
         
         return elites + children
 # Package initialization
