@@ -35,7 +35,7 @@ class TestDSPyMateSelector:
     ])
     def test_invalid_indices_raise_errors(self, index, expected_error):
         selector = DSPyMateSelector()
-        agents = [Agent({t: str(i)}) for i, t in enumerate(ChromosomeType)]
+        agents = [Agent({"strategy": "A"}), Agent({"strategy": "B"}), Agent({"strategy": "C"})]
         
         with mock.patch.object(selector.select_mate, 'predict',
                              return_value=dspy.Prediction(selected_index=index)):
