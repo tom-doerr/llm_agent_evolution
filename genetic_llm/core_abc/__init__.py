@@ -32,3 +32,9 @@ class PopulationEvaluatorABC(ABC):
     @abstractmethod
     def evaluate(self, population: list[AgentABC]) -> None:
         """Evaluate and assign fitness to population"""
+from enum import Enum
+
+class ChromosomeType(Enum):
+    BEHAVIOR = "behavior"
+    KNOWLEDGE = "knowledge" 
+    STRATEGY = "strategy"
