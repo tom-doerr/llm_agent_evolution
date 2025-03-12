@@ -1,7 +1,9 @@
+# Evolution Module Notes
+
 ## Current Implementation Notes
 
 - Basic mutation operator implemented with configurable rate
-- Mutation applied post-recombination to all chromosomes
+- Mutation applied post-recombination to all chromosomes  
 - Mutation tests verify application and rate compliance
 - Elite preservation logic working as intended
 
