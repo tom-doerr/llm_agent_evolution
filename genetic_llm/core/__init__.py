@@ -50,15 +50,15 @@ class Agent(AgentABC):
         return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
     
     # Implement abstract methods from AgentABC
-    def select_mates(self, population: list['Agent']) -> list['Agent']:  # pylint: disable=unused-argument
-        """Select mating partners from population"""
-        # Implementation left as placeholder since mate selection logic
-        # should be in the corresponding chromosome
-        return []
+    def select_mates(self, population: list['Agent']) -> list['Agent']:
+        """Select mating partners from population using chromosome-defined strategy"""
+        selector = next(c.value for c in self.chromosomes 
+                      if c.type == ChromosomeType.MATE_SELECTION)
+        return selector(population, self)
 
-    def recombine(self, partner: 'Agent') -> 'Agent':  # pylint: disable=unused-argument
-        """Recombine with partner agent to produce new offspring"""
-        # Implementation left as placeholder since recombination logic
-        # should be in the corresponding chromosome
-        return self
+    def recombine(self, partner: 'Agent']) -> 'Agent':
+        """Recombine with partner agent using chromosome-defined recombination"""
+        recombinator = next(c.value for c in self.chromosomes
+                          if c.type == ChromosomeType.RECOMBINATION)
+        return recombinator(self, partner)
 
