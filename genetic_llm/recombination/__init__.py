@@ -16,7 +16,7 @@ class DSPyRecombiner(RecombinerABC, dspy.Module):
         result = self.recombine(
             parent1_chromosome=parent1,
             parent2_chromosome=parent2
-        ).child_chromosome
+        )
         
         if not hasattr(result, 'child_chromosome'):
             raise RuntimeError("Recombination failed - missing child_chromosome in response")
