@@ -102,6 +102,43 @@ class TestEvolutionOperations:
     """Evolution process operation tests"""
 
 class TestValidationMechanisms:
+    def test_default_schemas_validation(self):
+        from genetic_llm.validation.default_schemas import DEFAULT_SCHEMAS
+        from genetic_llm.validation import JSONSchemaValidator
+        
+        validator = JSONSchemaValidator(DEFAULT_SCHEMAS)
+        
+        # Test valid DNA
+        valid_dna = TestAgent({
+            "dna": '{"sequence": "ACGT", "length": 4}'
+        })
+        assert validator.validate(valid_dna.chromosomes) is True
+        
+        # Invalid DNA (invalid characters)
+        invalid_dna = TestAgent({
+            "dna": '{"sequence": "AXYZ", "length": 4}'
+        })
+        with pytest.raises(ValueError):
+            validator.validate(invalid_dna.chromosomes)
+
+    def test_model_config_validation(self):
+        from genetic_llm.validation.default_schemas import DEFAULT_SCHEMAS
+        from genetic_llm.validation import JSONSchemaValidator
+        
+        validator = JSONSchemaValidator(DEFAULT_SCHEMAS)
+        
+        # Valid model config
+        valid_config = TestAgent({
+            "model_config": '{"model_type": "gpt", "temperature": 0.7}'
+        })
+        assert validator.validate(valid_config.chromosomes) is True
+        
+        # Invalid model type
+        invalid_config = TestAgent({
+            "model_config": '{"model_type": "unknown"}'
+        })
+        with pytest.raises(ValueError):
+            validator.validate(invalid_config.chromosomes)
     def test_chromosome_validation(self):
         
         schemas = {
