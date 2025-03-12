@@ -1,6 +1,7 @@
 from typing import NamedTuple
 from pydantic import BaseModel, Field
-from genetic_llm.core_abc import GeneticConfigABC, AgentABC, ChromosomeType
+from genetic_llm.core_abc import GeneticConfigABC, AgentABC
+from genetic_llm.core_abc.chromosome_type import ChromosomeType
 
 
 class GeneticConfig(BaseModel, GeneticConfigABC):

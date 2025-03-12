@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Type
-from . import ChromosomeType
+from .chromosome_type import ChromosomeType
 
 class GeneticConfigABC(ABC):
     @abstractmethod
@@ -36,9 +36,4 @@ class PopulationEvaluatorABC(ABC):
 class FitnessConfigABC(BaseModel):
     max_length: int
     fitness_weights: dict
-from enum import Enum
-
-class ChromosomeType(Enum):
-    TASK = "task"
-    MATE_SELECTION = "mate_selection" 
-    RECOMBINATION = "recombination"
+# Moved to chromosome_type.py to avoid circular imports
