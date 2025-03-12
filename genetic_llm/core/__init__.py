@@ -1,10 +1,12 @@
 from typing import NamedTuple
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from genetic_llm.core_abc import GeneticConfigABC, AgentABC
+from genetic_llm.core_abc.chromosome_type import ChromosomeType
 from genetic_llm.core_abc.chromosome_type import ChromosomeType
 
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
+    model_config = ConfigDict(validate_default=True)
     population_size: int = Field(default=50, gt=0)
     mutation_rate: float = Field(default=0.05, ge=0.0, le=1.0)
     elite_size: int = Field(default=5, ge=0)
