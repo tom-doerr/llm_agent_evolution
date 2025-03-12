@@ -41,7 +41,7 @@ class Agent(AgentABC):
             raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
             
         if not 0.0 <= fitness <= 1.0:
-            raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")
+            raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")  # Fitness normalized 0-1 for selection
 
         self.chromosomes = chromosomes
         self.fitness = fitness
