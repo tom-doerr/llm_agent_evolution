@@ -32,6 +32,10 @@ class PopulationEvaluatorABC(ABC):
     @abstractmethod
     def evaluate(self, population: list[AgentABC]) -> None:
         """Evaluate and assign fitness to population"""
+        
+class FitnessConfigABC(BaseModel):
+    max_length: int
+    fitness_weights: dict
 from enum import Enum
 
 class ChromosomeType(Enum):

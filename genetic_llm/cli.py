@@ -31,9 +31,12 @@ class CLIImplementation(CLIEngineABC):
         recombiner = DSPyRecombiner()
         engine = EvolutionEngine(config, mate_selector, recombiner)
         
+        from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
+        evaluator = StringOptimizationEvaluator(config)
+        
         population = [
             Agent({
-                ChromosomeType.TASK: f"Do X using {random.choice(['method A', 'method B'])}",
+                ChromosomeType.TASK: evaluator.generate_initial(),
                 ChromosomeType.MATE_SELECTION: f"Select mates based on {random.choice(['fitness', 'diversity'])}",
                 ChromosomeType.RECOMBINATION: f"Combine using {random.choice(['crossover', 'blending'])}"
             }) for _ in range(config.population_size)

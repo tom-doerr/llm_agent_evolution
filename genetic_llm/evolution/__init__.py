@@ -14,6 +14,10 @@ class EvolutionEngine(EvolutionEngineABC):
         self.recombiner = recombiner
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:
+        # First evaluate current population's fitness
+        from genetic_llm.core.evaluators.string_optimizer import StringOptimizationEvaluator
+        evaluator = StringOptimizationEvaluator(self.config)
+        evaluator.evaluate(population)
         if self.config.elite_size > self.config.population_size:
             raise ValueError("Elite size cannot exceed population size")
             

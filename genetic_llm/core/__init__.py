@@ -7,6 +7,8 @@ class GeneticConfig(BaseModel, GeneticConfigABC):
     population_size: int = Field(default=50, gt=0)
     mutation_rate: float = Field(default=0.05, ge=0.0, le=1.0)
     elite_size: int = Field(default=5, ge=0)
+    max_length: int = Field(default=23)
+    fitness_weights: dict = Field(default={"a_score": 1.0, "length_penalty": -1.0})
 
 class Chromosome(NamedTuple):
     type: ChromosomeType
