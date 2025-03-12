@@ -11,6 +11,14 @@ class GeneticConfig(BaseModel, GeneticConfigABC):
     elite_size: int = Field(default=5, ge=0)
     max_length: int = Field(default=23)
     fitness_weights: dict = Field(default={"a_score": 1.0, "length_penalty": -1.0})
+    
+    @model_validator(mode='after')
+    def check_fitness_weights(self):
+        required_keys = {'a_score', 'length_penalty'}
+        if not required_keys.issubset(self.fitness_weights):
+            missing = required_keys - self.fitness_weights.keys()
+            raise ValueError(f"Missing fitness weights: {missing}")
+        return self
 
 class Chromosome(NamedTuple):
     type: ChromosomeType
@@ -23,8 +31,8 @@ class Chromosome(NamedTuple):
 
 
 
-def tournament_selection(population: list[Agent]) -> list[Agent]:
-    """Select top 25% performers"""
+def tournament_selection(population: list[Agent], agent: Agent) -> list[Agent]:
+    """Select top 25% performers (ignoring agent parameter)"""
     k = max(2, len(population) // 4)
     return sorted(population, key=lambda a: a.fitness, reverse=True)[:k]
 
@@ -79,6 +87,10 @@ def evolve_population(population: list[Agent], config: GeneticConfig, evaluator:
     while len(new_population) < config.population_size:
         parent1 = random.choice(elites if elites else population)
         mates = parent1.select_mates(population)
+        
+        if not mates:  # Handle empty selection
+            mates = [random.choice(population)]
+            
         parent2 = random.choice(mates)
         
         child = parent1.recombine(parent2)

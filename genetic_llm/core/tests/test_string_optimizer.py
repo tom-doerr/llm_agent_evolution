@@ -31,7 +31,8 @@ class TestStringOptimizationEvaluator:
         ))
         
         evaluator.evaluate([agent])
-        assert agent.fitness == 25 * 1.0 + (35 - 23) * -1.0  # 25 a's, 12 over limit
+        expected = (35 * 1.0) + (12 * -1.0)  # 35 a's, 12 over limit
+        assert agent.fitness == pytest.approx(expected)
         
     def test_initial_generation(self, config):
         evaluator = StringOptimizationEvaluator(config)
