@@ -69,14 +69,16 @@ class TestEvolutionEngineBasics:
 
 class TestEvolutionEngineSemantics:
     def test_chromosome_types_preserved(self):
-        config = GeneticConfig(population_size=10, elite_size=2)
-        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
-        )
-        
-        # Create initial population with all chromosome types
-        population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
-        new_pop = engine.evolve_population(population)
+        # Create and evolve population in one step
+        new_pop = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            GeneticConfig(population_size=10, elite_size=2),
+            DSPyMateSelector(),
+            DSPyRecombiner(),
+            Mock()
+        ).evolve_population([
+            TestAgent({ct: "test" for ct in ChromosomeType})
+            for _ in range(10)
+        ])
         
         # Verify all chromosome types exist in all agents
         for agent in new_pop:

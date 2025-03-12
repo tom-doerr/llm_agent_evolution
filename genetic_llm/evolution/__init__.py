@@ -3,7 +3,7 @@ from genetic_llm.core_abc import AgentABC
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 from genetic_llm.evolution_abc import EvolutionEngineABC
-from genetic_llm.evaluator_abc import EvaluatorABC  # Keep import since it's used in type hints
+from genetic_llm.evaluator_abc import EvaluatorABC  # pylint: disable=no-name-in-module
 
 class EvolutionEngine(EvolutionEngineABC):
     def __init__(  # pylint: disable=too-many-arguments
@@ -22,11 +22,17 @@ class EvolutionEngine(EvolutionEngineABC):
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:
         self.evaluator.evaluate(population)
-            
-        # Select elites and calculate needed children
+        
         elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
-        children = []
-        num_children = self.config.population_size - len(elites)
+        children = [
+            Agent({
+                ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
+                for ct in parent1.chromosomes.keys()
+            })
+            for _ in range(self.config.population_size - len(elites))
+            for parent1, parent2 in [(self.mate_selector.select(population),
+                                     self.mate_selector.select([a for a in population if a != parent1] or population))]
+        ]
         for _ in range(num_children):
             parent1 = self.mate_selector.select(population)
             remaining = [a for a in population if a != parent1]
