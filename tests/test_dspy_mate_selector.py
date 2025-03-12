@@ -8,7 +8,7 @@ class DummyPrediction(NamedTuple):
     selected_mate: Agent
 
 # Create a subclass that overrides select to avoid dspy dependencies
-class DummyDSPyMateSelector(DSpyMateSelector := DSPyMateSelector):  # alias to avoid shadowing
+class DummyDSPyMateSelector(DSPyMateSelector):
     def __init__(self):
         # Do not initialize the dspy components
         pass
