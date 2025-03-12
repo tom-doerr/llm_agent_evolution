@@ -16,10 +16,23 @@ class TestDSPyRecombiner:  # pylint: disable=too-many-public-methods
         assert issubclass(DSPyRecombiner, dspy.Module)
 
     def test_combine_valid_parents(self, mock_recombine):
-        mock_recombine.return_value = Mock(child_chromosome=12345)
+        valid_chromosome = '{"genes": ["A1", "B2"], "metadata": {"source": "cross"}}'
+        mock_recombine.return_value = Mock(child_chromosome=valid_chromosome)
         recombiner = DSPyRecombiner()
         result = recombiner.combine("ABCDEF", "GHIJKL")
-        assert result == "12345"
+        assert validate_chromosome(result)
+        assert "A1" in result
+
+    def test_invalid_chromosome_structure(self, mock_recombine):
+        invalid = '{"wrong_key": 123}'
+        mock_recombine.return_value = Mock(child_chromosome=invalid)
+        recombiner = DSPyRecombiner()
+        assert recombiner.combine("A", "B") == ""
+
+    def test_malformed_json_handling(self, mock_recombine):
+        mock_recombine.return_value = Mock(child_chromosome="{invalid}")
+        recombiner = DSPyRecombiner()
+        assert recombiner.combine("A", "B") == ""
 
     def test_combine_empty_parents(self):
         recombiner = DSPyRecombiner()
