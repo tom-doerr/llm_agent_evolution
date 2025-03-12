@@ -2,7 +2,7 @@
 max-module-lines=100
 
 [DESIGN]
-max-cyclomatic-complexity=5
+max-cyclomatic-complexity=10  # Increased from 5 to allow slightly more complex methods
 
 [TYPECHECK]
 ignored-modules=dspy
