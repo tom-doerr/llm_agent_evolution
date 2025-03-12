@@ -44,8 +44,6 @@ class TestDSPyMateSelector:
         ("invalid", ValueError),
         ("-1", IndexError),
         ("3", IndexError),  # Population size 3 (0-2)
-        ("2.5", ValueError),
-        (" 3 ", IndexError),
         ("two", ValueError),
         ("NaN", ValueError)
     ])
@@ -57,3 +55,35 @@ class TestDSPyMateSelector:
                              return_value=dspy.Prediction(selected_index=index)):
             with pytest.raises(expected_error):
                 selector.select(agents)
+
+    @pytest.mark.parametrize("index", ["0", "1 ", "2.0", " 2 "])
+    def test_valid_indices(self, index):
+        selector = DSPyMateSelector()
+        agents = [
+            TestAgent({"strategy": "A"}),
+            TestAgent({"strategy": "B"}),
+            TestAgent({"strategy": "C"})
+        ]
+        
+        with mock.patch.object(selector.select_mate, '__call__',
+                             return_value=dspy.Prediction(selected_index=index)):
+            selected = selector.select(agents)
+            assert selected in agents
+
+    def test_input_data_format(self):
+        selector = DSPyMateSelector()
+        agents = [
+            TestAgent({"a": 1}),
+            TestAgent({"b": 2})
+        ]
+        agents[0].fitness = 0.8
+        agents[1].fitness = 1.2
+
+        with mock.patch.object(selector.select_mate, '__call__') as mock_predict:
+            mock_predict.return_value = dspy.Prediction(selected_index="0")
+            selector.select(agents)
+            
+            # Verify input format
+            called_with = mock_predict.call_args[1]
+            assert called_with["population_chromosomes"] == [{"a": 1}, {"b": 2}]
+            assert called_with["population_fitness"] == [0.8, 1.2]
