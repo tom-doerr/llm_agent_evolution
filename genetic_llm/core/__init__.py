@@ -14,6 +14,11 @@ class Chromosome(NamedTuple):
     type: ChromosomeType
     value: str
 
+    def __new__(cls, type: ChromosomeType, value: str):
+        if not isinstance(type, ChromosomeType):
+            raise TypeError(f"Invalid chromosome type {type.__class__.__name__}")
+        return super().__new__(cls, type, value)
+
 
 class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
