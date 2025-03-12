@@ -15,8 +15,11 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         if not population:
             raise ValueError("Cannot select from empty population")
             
-        population_chromosomes = [agent.chromosomes for agent in population]
-        population_fitness = [agent.fitness for agent in population]
+        population_chromosomes = []
+        population_fitness = []
+        for agent in population:
+            population_chromosomes.append(agent.chromosomes)
+            population_fitness.append(agent.fitness)
         
         with dspy.context(lm=self.lm):
             prediction = self.select_mate(
