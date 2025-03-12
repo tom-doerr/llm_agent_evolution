@@ -15,10 +15,11 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         population_chromosomes = [agent.chromosomes for agent in population]
         population_fitness = [agent.fitness for agent in population]
         
-        prediction = self.select_mate(
-            population_chromosomes=population_chromosomes,
-            population_fitness=population_fitness
-        )
+        with dspy.context(lm=self.lm):
+            prediction = self.select_mate(
+                population_chromosomes=population_chromosomes,
+                population_fitness=population_fitness
+            )
         
         try:
             index = int(prediction.selected_index)

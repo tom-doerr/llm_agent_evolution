@@ -3,14 +3,18 @@ import dspy
 from unittest import mock
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.core import Agent, ChromosomeType
-from genetic_llm.mate_selection_abc import MateSelector
+from genetic_llm.mate_selection_abc import MateSelector  # ChromosomeType removed
 
 class TestDSPyMateSelector:
     def test_implements_abc(self):
         assert issubclass(DSPyMateSelector, MateSelector)
     def test_select_returns_valid_agent(self):
         selector = DSPyMateSelector()
-        agents = [Agent({t: str(i)}) for i, t in enumerate(ChromosomeType)]
+        agents = [
+            Agent({"strategy": "A", "parameters": "X"}),
+            Agent({"strategy": "B", "parameters": "Y"}),
+            Agent({"strategy": "C", "parameters": "Z"})
+        ]
         
         # Mock a valid prediction
         with mock.patch.object(selector.select_mate, 'predict', 
