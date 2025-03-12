@@ -19,9 +19,8 @@ class TestAgent(Agent):
         self._fitness = value
 
 class TestDSPyMateSelector:
-    def test_implements_abc(self):
-        assert issubclass(DSPyMateSelector, MateSelector)
     def test_select_returns_valid_agent(self):
+        assert issubclass(DSPyMateSelector, MateSelector), "Must implement MateSelector ABC"
         selector = DSPyMateSelector()
         agents = [
             TestAgent({"strategy": "A", "parameters": "X"}),
