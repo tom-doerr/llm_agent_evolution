@@ -8,7 +8,7 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         self.select_mate = dspy.Predict("agent_chromosomes, population_fitness -> selected_mate")
 
     def select(self, population: list) -> 'Agent':
-        result = self.select_mate(
+        self.select_mate(
             agent_chromosomes=population[0].chromosomes,
             population_fitness=[a.fitness for a in population]
         )

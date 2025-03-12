@@ -1,7 +1,9 @@
 import click
+import random
 from .evolution import EvolutionEngine
 from .core import GeneticConfig, Agent, ChromosomeType
-import random
+from .mate_selection import DSPyMateSelector
+from .recombination import DSPyRecombiner
 
 @click.group()
 def main():
@@ -11,9 +13,7 @@ def main():
 @click.option("--generations", default=100, help="Number of generations to evolve")
 def evolve(generations):
     config = GeneticConfig()
-    # Inject implementations
-    from .mate_selection import DSPyMateSelector
-    from .recombination import DSPyRecombiner
+    # Create component implementations
     mate_selector = DSPyMateSelector()
     recombiner = DSPyRecombiner()
     engine = EvolutionEngine(config, mate_selector, recombiner)
