@@ -15,11 +15,15 @@ class DSPyRecombiner(RecombinerABC, dspy.Module):
         if not parent1 and not parent2:
             return ""
             
-        with dspy.context(lm=self.lm):
-            result = self.recombine(
-                parent1_chromosome=parent1,
-                parent2_chromosome=parent2
-            )
-        
-        return getattr(result, 'child_chromosome', '')
+        try:
+            with dspy.context(lm=self.lm):
+                result = self.recombine(
+                    parent1_chromosome=parent1,
+                    parent2_chromosome=parent2
+                )
+            return getattr(result, 'child_chromosome', '')
+        except Exception as e:
+            # Log error and return empty string
+            print(f"Recombination error: {str(e)}")
+            return ""
 # Package initialization
