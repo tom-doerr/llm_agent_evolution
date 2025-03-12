@@ -1,10 +1,16 @@
 import dspy
 from genetic_llm.recombination_abc import RecombinerABC
 
-class Meta(type(RecombinerABC), type(dspy.Module)):
-    pass
+class Meta(type):
+    """Combined metaclass for RecombinerABC and dspy.Module"""
+    def __new__(cls, name, bases, namespace, **kwargs):
+        return type.__new__(type, name, bases, namespace)
+        
+    @classmethod
+    def __prepare__(cls, name, bases, **kwargs):
+        return super().__prepare__(name, bases, **kwargs)
 
-class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=Meta):
+class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=type("Meta", (type(RecombinerABC), type(dspy.Module)), {})):
     def __init__(self) -> None:
         super().__init__()
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
