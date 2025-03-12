@@ -1,6 +1,7 @@
 # pylint: disable=too-many-lines
 import logging
-import signal
+import threading
+import time
 import dspy
 from typing import Optional
 from genetic_llm.core import Agent
@@ -10,10 +11,28 @@ from .mate_selection_abc import MateSelector
 logger = logging.getLogger(__name__)
 
 class SelectionTimeoutError(Exception):
-    """Custom timeout exception to avoid built-in conflict"""
+    """Custom timeout exception for selection operations"""
 
-def timeout_handler(signum, frame):
-    raise SelectionTimeoutError("Model selection timed out")
+def timeout_wrapper(func, timeout, args=(), kwargs=None):
+    """Cross-platform timeout decorator implementation"""
+    result = []
+    exception = []
+    
+    def wrapper():
+        try:
+            result.append(func(*args, **(kwargs or {})))
+        except Exception as e:
+            exception.append(e)
+    
+    thread = threading.Thread(target=wrapper)
+    thread.start()
+    thread.join(timeout)
+    
+    if thread.is_alive():
+        raise SelectionTimeoutError(f"Timeout after {timeout} seconds")
+    if exception:
+        raise exception[0]
+    return result[0]
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:
@@ -68,26 +87,34 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             
         return index
 
-    def select(self, population: list[Agent]) -> Agent:  # pylint: disable=too-many-locals
+    def select(self, population: list[Agent]) -> Agent:
         if not population:
             logger.error("Selection attempted with empty population")
             raise ValueError("Cannot select from empty population")
 
         pop_data = self._get_population_data(population)
+        attempts = 0
         
-        # Set timeout alarm
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(self.config.timeout_seconds)
+        while True:
+            try:
+                return timeout_wrapper(
+                    self._execute_selection,
+                    self.config.timeout_seconds,
+                    args=(pop_data, len(population))
+                )
+            except (SelectionTimeoutError, ValueError, IndexError) as e:
+                attempts += 1
+                if attempts >= self.config.max_retries:
+                    logger.error("Selection failed after %d attempts", attempts)
+                    raise
+                logger.warning("Selection attempt %d failed: %s", attempts, str(e))
+                time.sleep(self.config.retry_delay * (2 ** (attempts-1)))
+
+    def _execute_selection(self, pop_data, population_size):
+        """Core selection logic without timeout handling"""
+        with dspy.context(lm=self.lm):
+            prediction = self.select_mate(**pop_data)
         
-        try:
-            with dspy.context(lm=self.lm):
-                prediction = self.select_mate(**pop_data)
-        except TimeoutError:
-            logger.warning("Model selection timed out after %ds", self.config.timeout_seconds)
-            raise
-        finally:
-            signal.alarm(0)  # Disable alarm
-            
         logger.debug("Raw model response: %s", prediction.selected_index)
-        return population[self._validate_index(prediction.selected_index, len(population))]
+        return self.population[self._validate_index(prediction.selected_index, population_size)]
 # Package initialization
