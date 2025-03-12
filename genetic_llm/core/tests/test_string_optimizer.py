@@ -13,13 +13,13 @@ class TestStringOptimizationEvaluator:
     def test_fitness_calculation(self, config):
         evaluator = StringOptimizationEvaluator(config)
         agent = Agent((  # pylint: disable=abstract-class-instantiated
-            Chromosome(ChromosomeType.TASK, "aaaabaaa"),
+            Chromosome(ChromosomeType.TASK, "aaaabaaa"),  # 7 a's
             Chromosome(ChromosomeType.MATE_SELECTION, "test"),
             Chromosome(ChromosomeType.RECOMBINATION, "test")
         ))
         
         evaluator.evaluate([agent])
-        assert agent.fitness == (8 * 1.0) + (0 * -1.0)  # 8 a's, 8 chars under limit
+        assert agent.fitness == pytest.approx((7 * 1.0) + (0 * -1.0))
         
     def test_length_penalty(self, config):
         long_string = "a" * 35
