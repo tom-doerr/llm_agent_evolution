@@ -47,4 +47,17 @@ class Agent(AgentABC):
         
     def __repr__(self) -> str:
         return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
+    
+    # Implement abstract methods from AgentABC
+    def select_mates(self, population: list[Agent]) -> list[Agent]:
+        """Select mating partners from population"""
+        # Implementation left as placeholder since mate selection logic
+        # should be in the corresponding chromosome
+        return []
+
+    def recombine(self, partner: Agent) -> Agent:
+        """Recombine with partner agent to produce new offspring"""
+        # Implementation left as placeholder since recombination logic
+        # should be in the corresponding chromosome
+        return self
 

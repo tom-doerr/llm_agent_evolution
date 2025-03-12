@@ -1,5 +1,5 @@
 from genetic_llm.core_abc import PopulationEvaluatorABC
-from genetic_llm.core import Agent, GeneticConfig
+from genetic_llm.core import Agent, GeneticConfig, Chromosome, ChromosomeType
 import random
 
 class StringOptimizationEvaluator(PopulationEvaluatorABC):
