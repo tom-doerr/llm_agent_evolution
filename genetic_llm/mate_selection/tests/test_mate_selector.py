@@ -3,6 +3,11 @@ import dspy
 from unittest import mock
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.core import Agent
+
+# Concrete test implementation
+class TestAgent(Agent):
+    def __init__(self, chromosomes):
+        super().__init__(chromosomes)
 from genetic_llm.mate_selection import MateSelector
 
 class TestDSPyMateSelector:
@@ -11,9 +16,9 @@ class TestDSPyMateSelector:
     def test_select_returns_valid_agent(self):
         selector = DSPyMateSelector()
         agents = [
-            Agent({"strategy": "A", "parameters": "X"}),
-            Agent({"strategy": "B", "parameters": "Y"}),
-            Agent({"strategy": "C", "parameters": "Z"})
+            TestAgent({"strategy": "A", "parameters": "X"}),
+            TestAgent({"strategy": "B", "parameters": "Y"}),
+            TestAgent({"strategy": "C", "parameters": "Z"})
         ]
         
         # Mock __call__ instead of predict
@@ -35,7 +40,7 @@ class TestDSPyMateSelector:
     ])
     def test_invalid_indices_raise_errors(self, index, expected_error):
         selector = DSPyMateSelector()
-        agents = [Agent({"strategy": "A"}), Agent({"strategy": "B"}), Agent({"strategy": "C"})]
+        agents = [TestAgent({"strategy": "A"}), TestAgent({"strategy": "B"}), TestAgent({"strategy": "C"})]
         
         with mock.patch.object(selector.select_mate, '__call__',
                              return_value=dspy.Prediction(selected_index=index)):
