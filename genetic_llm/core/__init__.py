@@ -22,34 +22,6 @@ class Chromosome(NamedTuple):
         return super().__new__(cls, chrom_type, value)
 
 
-class Agent(AgentABC):
-    def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
-        required_types = {ChromosomeType.TASK, ChromosomeType.MATE_SELECTION, ChromosomeType.RECOMBINATION}
-        seen_types = set()
-
-        # Validate chromosome types and uniqueness
-        for chromo in chromosomes:
-            if not isinstance(chromo.type, ChromosomeType):
-                raise TypeError(f"Invalid chromosome type {type(chromo.type)} - must be ChromosomeType")
-            if chromo.type in seen_types:
-                raise ValueError(f"Duplicate chromosome type: {chromo.type}")
-            seen_types.add(chromo.type)
-
-        # Check required types
-        if not required_types.issubset(seen_types):
-            missing = required_types - seen_types
-            raise ValueError(f"Missing required chromosome types: {', '.join(mt.value for mt in missing)}")
-            
-        if not 0.0 <= fitness <= 1.0:
-            raise ValueError(f"Invalid fitness {fitness:.2f} - must be between 0.0-1.0")  # Fitness normalized 0-1 for selection
-
-        self.chromosomes = chromosomes
-        self.fitness = fitness
-        
-    def __repr__(self) -> str:
-        return f"Agent(fitness={self.fitness:.2f}, chromosomes={[c.type for c in self.chromosomes]})"
-    
-    # Implement abstract methods from AgentABC
 
 def tournament_selection(population: list[Agent]) -> list[Agent]:
     """Select top 25% performers"""

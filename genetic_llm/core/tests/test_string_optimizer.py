@@ -12,7 +12,7 @@ class TestStringOptimizationEvaluator:
 
     def test_fitness_calculation(self, config):
         evaluator = StringOptimizationEvaluator(config)
-        agent = Agent((
+        agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "aaaabaaa"),
             Chromosome(ChromosomeType.MATE_SELECTION, "test"),
             Chromosome(ChromosomeType.RECOMBINATION, "test")

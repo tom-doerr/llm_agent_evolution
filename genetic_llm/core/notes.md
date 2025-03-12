@@ -6,7 +6,7 @@
 - CLI implementation incomplete
 
 ## Next Steps
-1. Implement mutation operator ← HIGHEST PRIORITY
+1. Implement mutation operator (HIGHEST PRIORITY)
 2. Complete CLI implementation
 3. Add chromosome validation decorators
 4. Create baseline experiment runner
