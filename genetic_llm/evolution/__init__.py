@@ -8,6 +8,9 @@ from genetic_llm.mutation_abc import MutationOperatorABC  # pylint: disable=no-n
 from genetic_llm.validation.chromosome_validator import ChromosomeValidatorABC
 
 class EvolutionEngine(EvolutionEngineABC):
+    def _validate_chromosomes(self, chromosomes: Dict[ChromosomeType, str]) -> None:
+        """Concrete implementation of abstract method"""
+        self.validator.validate(chromosomes)
     def __init__(  # pylint: disable=too-many-arguments
         self,
         config: GeneticConfig, 
