@@ -1,12 +1,12 @@
 ## Current Issues
 
-- Model could return float values that truncate to valid indices
-- No validation that fitness values are set before selection
-- Model instructions could be more precise about integer requirement
+- Need proper logging implementation instead of print statements
+- Integration tests require API access configuration
+- Float-to-int conversion could still allow invalid indices (e.g. 2.999 -> 2)
 
 ## Next Steps
 
-1. Add input validation for agent fitness values
-2. Enhance model instructions to emphasize integer indices
-3. Consider adding integration tests with real model
-4. Implement logging for model responses
+1. Implement proper logging framework
+2. Add configuration system for model parameters
+3. Add timeout handling for model requests
+4. Create validation decorator for agent fitness

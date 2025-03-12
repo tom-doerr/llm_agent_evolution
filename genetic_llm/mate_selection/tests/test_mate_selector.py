@@ -69,6 +69,35 @@ class TestDSPyMateSelector:
             selected = selector.select(agents)
             assert selected in agents
 
+    def test_missing_fitness_raises_error(self):
+        selector = DSPyMateSelector()
+        agents = [
+            TestAgent({"a": 1}),
+            TestAgent({"b": 2})
+        ]
+        agents[0].fitness = 0.5
+        # agents[1] has no fitness set
+        
+        with pytest.raises(ValueError) as excinfo:
+            selector.select(agents)
+        assert "missing required fitness value" in str(excinfo.value)
+
+    @pytest.mark.skipif(not os.getenv('RUN_INTEGRATION'), reason="Integration test")
+    def test_integration_with_real_model(self):
+        selector = DSPyMateSelector()
+        agents = [
+            TestAgent({"strategy": "Aggressive"}),
+            TestAgent({"strategy": "Conservative"})
+        ]
+        agents[0].fitness = 0.9
+        agents[1].fitness = 0.7
+        
+        try:
+            selected = selector.select(agents)
+            assert selected in agents
+        except Exception as e:
+            pytest.fail(f"Integration test failed with real model: {str(e)}")
+
     def test_input_data_format(self):
         selector = DSPyMateSelector()
         agents = [

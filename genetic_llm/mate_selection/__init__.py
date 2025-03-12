@@ -8,7 +8,11 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         self.lm = dspy.LM(model)
         self.select_mate = dspy.Predict(
             "population_chromosomes, population_fitness -> selected_index",
-            instructions="Select a 0-based index of the most promising agent from the population. Return ONLY the integer index."
+            instructions=(
+                "Select the 0-based integer index of the most promising agent. "
+                "Your response MUST be a single integer between 0 and {population_size-1}. "
+                "Non-integer responses will cause system errors."
+            )
         )
 
     def select(self, population: list[Agent]) -> Agent:
@@ -18,6 +22,8 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         population_chromosomes = []
         population_fitness = []
         for agent in population:
+            if not hasattr(agent, 'fitness') or agent.fitness is None:
+                raise ValueError(f"Agent {agent} missing required fitness value")
             population_chromosomes.append(agent.chromosomes)
             population_fitness.append(agent.fitness)
         
@@ -26,6 +32,9 @@ class DSPyMateSelector(MateSelector, dspy.Module):
                 population_chromosomes=population_chromosomes,
                 population_fitness=population_fitness
             )
+        
+        # Add debug logging
+        print(f"Model response: {prediction.selected_index}")  # TODO: Replace with proper logging
         
         try:
             index = int(float(prediction.selected_index.strip()))
