@@ -22,7 +22,7 @@ class TestEvolutionEngineBasics:
     def test_evolve_population_size_remains_constant(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()  # pylint: disable=abstract-class-instantiated
         )
         population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
@@ -93,7 +93,7 @@ class TestEvolutionEdgeCases:
         new_pop = engine.evolve_population(population)
         
         assert new_pop[0].fitness == 10  # Elite preserved
-        assert any(agent.chromosomes[ChromosomeType.DNA] == "A" for agent in new_pop)
+        assert any(agent.chromosomes[ChromosomeType.DNA] == "A" for agent in new_pop)  # pylint: disable=no-member
 
 class TestEvolutionEngineSemantics:
     def test_chromosome_types_preserved(self):

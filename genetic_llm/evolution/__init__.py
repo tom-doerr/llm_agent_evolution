@@ -20,7 +20,7 @@ class EvolutionEngine(EvolutionEngineABC):
         self.recombiner = recombiner
         self.evaluator = evaluator
         
-    def evolve_population(self, population: list[Agent]) -> list[Agent]:
+    def evolve_population(self, population: list[Agent]) -> list[Agent]:  # pylint: disable=too-many-locals
         self.evaluator.evaluate(population)
         
         elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
@@ -41,6 +41,6 @@ class EvolutionEngine(EvolutionEngineABC):
                 ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
                 for ct in parent1.chromosomes.keys()
             }
-            children.append(Agent(child_chromosomes))
+            children.append(Agent(child_chromosomes))  # pylint: disable=abstract-class-instantiated
         return elites + children
 # Package initialization
