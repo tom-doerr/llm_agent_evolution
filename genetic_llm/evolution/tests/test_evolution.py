@@ -9,8 +9,9 @@ class TestEvolutionEngine:
     def test_implements_abc(self):
         assert issubclass(EvolutionEngine, EvolutionEngineABC)
     def test_evolve_population_size_remains_constant(self):
+        from unittest.mock import Mock
         config = GeneticConfig(population_size=10, elite_size=2)
-        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner())
+        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
         population = [Agent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
         assert len(new_pop) == config.population_size
@@ -33,8 +34,9 @@ class TestEvolutionEngine:
             EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
 
     def test_tied_fitness_elite_selection(self):
+        from unittest.mock import Mock
         config = GeneticConfig(population_size=5, elite_size=2)
-        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner())
+        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
         
         population = [
             Agent({"dna": "A"}, fitness=10),
@@ -49,8 +51,9 @@ class TestEvolutionEngine:
         assert sum(1 for a in new_pop if a.fitness == 10) == 2
 
     def test_chromosome_types_preserved(self):
+        from unittest.mock import Mock
         config = GeneticConfig(population_size=10, elite_size=2)
-        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner())
+        engine = EvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
         
         population = [Agent({"dna": "test", "meta": "data"}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
