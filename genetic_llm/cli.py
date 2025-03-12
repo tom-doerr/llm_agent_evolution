@@ -1,9 +1,9 @@
 import click
 import random
-from .evolution_abc import EvolutionEngineABC
-from .core import GeneticConfig, Agent, ChromosomeType
-from .mate_selection import DSPyMateSelector
-from .recombination import DSPyRecombiner
+from genetic_llm.evolution_abc import EvolutionEngineABC
+from genetic_llm.core import GeneticConfig, Agent, ChromosomeType
+from genetic_llm.mate_selection.interface import MateSelector
+from genetic_llm.recombination.interface import RecombinerABC
 
 @click.group()
 from .cli_abc import CLIEngineABC

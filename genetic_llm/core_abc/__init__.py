@@ -39,18 +39,6 @@ class FitnessConfigABC(BaseModel):
 from enum import Enum
 
 class ChromosomeType(Enum):
-    BEHAVIOR = "behavior"
-    KNOWLEDGE = "knowledge" 
-    STRATEGY = "strategy"
-from enum import Enum
-
-class ChromosomeType(Enum):
     TASK = "task"
     MATE_SELECTION = "mate_selection" 
     RECOMBINATION = "recombination"
-
-class GeneticConfigABC:
-    pass
-
-class AgentABC:
-    pass
