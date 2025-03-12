@@ -40,11 +40,11 @@ class EvolutionEngine(EvolutionEngineABC):
             parent2 = self.mate_selector.select(parent2_source)
             
             child_chromosomes = {
-                ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
-                self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct]),
-                self.config.mutation_rate
-            )
-            for ct in parent1.chromosomes.keys()
+                ct: self.mutation_operator.mutate(
+                    self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct]),
+                    self.config.mutation_rate
+                )
+                for ct in parent1.chromosomes.keys()
             }
             children.append(Agent(child_chromosomes))  # pylint: disable=abstract-class-instantiated
         return elites + children
