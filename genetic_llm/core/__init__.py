@@ -1,7 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, NamedTuple
 
 class ChromosomeType(Enum):
     TASK = "task"
