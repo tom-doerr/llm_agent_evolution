@@ -3,8 +3,7 @@ from .core import Agent, GeneticConfig
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 
-from ..evolution_abc import EvolutionEngineABC
-from ..core_abc import AgentABC
+from genetic_llm.evolution_abc import EvolutionEngineABC
 
 class EvolutionEngine(EvolutionEngineABC):
     def __init__(self, config: GeneticConfig, 
@@ -31,5 +30,6 @@ class EvolutionEngine(EvolutionEngineABC):
                 for ct, p1, p2 in zip(parents[0].chromosomes, parents, parents[1:])
             }
             children.append(Agent(child_chromosomes))
-            
+        
+        new_population = elites + children
         return new_population
