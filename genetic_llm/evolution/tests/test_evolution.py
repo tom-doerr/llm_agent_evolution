@@ -1,12 +1,12 @@
 import pytest
 from unittest.mock import Mock
-import pytest
 from genetic_llm.evolution import EvolutionEngine
 from genetic_llm.core import GeneticConfig, ChromosomeType
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.evolution_abc import EvolutionEngineABC
-from genetic_llm.validation import JSONSchemaValidator
+from genetic_llm.validation.chromosome_validator import JSONSchemaValidator
+from genetic_llm.validation.default_schemas import DEFAULT_SCHEMAS
 
 # Test concrete implementation
 class TestConcreteEvolutionEngine(EvolutionEngine):
@@ -103,8 +103,6 @@ class TestEvolutionOperations:
 
 class TestValidationMechanisms:
     def test_default_schemas_validation(self):
-        from genetic_llm.validation.default_schemas import DEFAULT_SCHEMAS
-        from genetic_llm.validation import JSONSchemaValidator
         
         validator = JSONSchemaValidator(DEFAULT_SCHEMAS)
         
@@ -122,8 +120,6 @@ class TestValidationMechanisms:
             validator.validate(invalid_dna.chromosomes)
 
     def test_model_config_validation(self):
-        from genetic_llm.validation.default_schemas import DEFAULT_SCHEMAS
-        from genetic_llm.validation import JSONSchemaValidator
         
         validator = JSONSchemaValidator(DEFAULT_SCHEMAS)
         

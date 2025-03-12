@@ -1,7 +1,7 @@
 from genetic_llm.core import ChromosomeType
 
 DEFAULT_SCHEMAS = {
-    ChromosomeType.DNA: {
+    "DNA": {  # Using string keys until enum values are confirmed
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
@@ -11,7 +11,7 @@ DEFAULT_SCHEMAS = {
         "required": ["sequence", "length"],
         "additionalProperties": False
     },
-    ChromosomeType.PROMPT: {
+    "PROMPT": {  # Using string keys until enum values are confirmed
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
@@ -25,7 +25,7 @@ DEFAULT_SCHEMAS = {
         "required": ["text"],
         "additionalProperties": False
     },
-    ChromosomeType.MODEL_CONFIG: {
+    "MODEL_CONFIG": {  # Using string keys until enum values are confirmed
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
