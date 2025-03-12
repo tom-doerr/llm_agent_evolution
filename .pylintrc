@@ -3,8 +3,14 @@ max-module-lines=200
 
 [DESIGN]
 max-complexity=5
+
+[TYPECHECK]
 ignored-modules=dspy
+
+[SIMILARITIES]
 min-similarity-lines=10
+
+[BASIC]
 max-args=5
 max-locals=10
 max-returns=3
