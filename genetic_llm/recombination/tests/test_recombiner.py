@@ -2,10 +2,13 @@ import pytest
 from unittest.mock import Mock
 import dspy
 from genetic_llm.recombination import DSPyRecombiner
+from genetic_llm.recombination_abc import RecombinerABC
 
 class TestDSPyRecombiner:
     def test_implements_interface(self):
-        assert isinstance(DSPyRecombiner(), dspy.Module)
+        # Test both parent classes
+        assert issubclass(DSPyRecombiner, RecombinerABC)
+        assert issubclass(DSPyRecombiner, dspy.Module)
 
     @pytest.fixture
     def mock_recombine(self, monkeypatch):
@@ -28,3 +31,8 @@ class TestDSPyRecombiner:
         recombiner = DSPyRecombiner()
         result = recombiner.combine("123", "abc")
         assert result == ""  # Default empty response on error
+
+    def test_invalid_input_types(self):
+        recombiner = DSPyRecombiner()
+        with pytest.raises(ValueError):
+            recombiner.combine(123, "abc")
