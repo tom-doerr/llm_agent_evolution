@@ -55,6 +55,22 @@ class TestAgent:
         assert "MATE_SELECTION" in repr(agent)
         assert "RECOMBINATION" in repr(agent)
 
+    def test_genetic_operations(self):
+        parent1 = Agent((
+            Chromosome(ChromosomeType.TASK, "aaaa"),
+            Chromosome(ChromosomeType.MATE_SELECTION, "tournament_selection"),
+            Chromosome(ChromosomeType.RECOMBINATION, "single_point_crossover"),
+        ))
+        parent2 = Agent((
+            Chromosome(ChromosomeType.TASK, "bbbb"),
+            Chromosome(ChromosomeType.MATE_SELECTION, "tournament_selection"),
+            Chromosome(ChromosomeType.RECOMBINATION, "single_point_crossover"),
+        ))
+        
+        child = parent1.recombine(parent2)
+        assert len(child.chromosomes[0].value) == 4
+        assert child.fitness == 0.0
+
 class TestChromosome:
     def test_creation(self):
         ct = ChromosomeType.TASK

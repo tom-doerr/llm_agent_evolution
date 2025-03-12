@@ -2,6 +2,24 @@ from typing import NamedTuple
 from pydantic import BaseModel, Field, ConfigDict
 from genetic_llm.core_abc import GeneticConfigABC, AgentABC
 from genetic_llm.core_abc.chromosome_type import ChromosomeType
+import random
+
+def tournament_selection(population: list[Agent], agent: Agent) -> list[Agent]:
+    """Select top 25% performers as mates"""
+    k = max(2, len(population) // 4)
+    return sorted(population, key=lambda a: a.fitness, reverse=True)[:k]
+
+def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
+    """Combine task chromosomes from both parents"""
+    task1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK)
+    task2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK)
+    crossover_point = len(task1.value) // 2
+    new_value = task1.value[:crossover_point] + task2.value[crossover_point:]
+    return Agent((
+        Chromosome(ChromosomeType.TASK, new_value),
+        parent1.chromosomes[1],  # mate selection
+        parent1.chromosomes[2],  # recombination
+    ))
 
 
 class GeneticConfig(BaseModel, GeneticConfigABC):
@@ -51,14 +69,12 @@ class Agent(AgentABC):
     
     # Implement abstract methods from AgentABC
     def select_mates(self, population: list['Agent']) -> list['Agent']:
-        """Select mating partners from population using chromosome-defined strategy"""
-        selector = next(c.value for c in self.chromosomes 
-                      if c.type == ChromosomeType.MATE_SELECTION)
-        return selector(population, self)
+        selector_name = next(c.value for c in self.chromosomes 
+                          if c.type == ChromosomeType.MATE_SELECTION)
+        return globals()[selector_name](population, self)
 
     def recombine(self, partner: 'Agent') -> 'Agent':
-        """Recombine with partner agent using chromosome-defined recombination"""
-        recombinator = next(c.value for c in self.chromosomes
-                          if c.type == ChromosomeType.RECOMBINATION)
-        return recombinator(self, partner)
+        recombinator_name = next(c.value for c in self.chromosomes
+                              if c.type == ChromosomeType.RECOMBINATION)
+        return globals()[recombinator_name](self, partner)
 
