@@ -1,0 +1,13 @@
+[project]
+name = "genetic_llm"
+version = "0.1.0"
+description = "Genetic optimization system for LLM agents"
+requires-python = ">=3.9"
+dependencies = [
+    "dspy>=2.0",
+    "pydantic>=2.0",
+    "openai>=1.0"
+]
+
+[project.scripts]
+genetic-llm = "genetic_llm.cli:main"
