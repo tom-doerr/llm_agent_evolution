@@ -9,7 +9,8 @@ class DSPyMateSelector(MateSelector, dspy.Module):
         self.lm = dspy.LM(model)
         self.select_mate = dspy.Predict("population_chromosomes, population_fitness -> selected_index")
 
-    def select(self, population: List[Agent]) -> Agent:
+    def select(self, population: list[Agent]) -> Agent:
+        """Select an agent using LLM-based selection with validation"""
         if not population:
             raise ValueError("Cannot select from empty population")
             
@@ -27,6 +28,6 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             raise ValueError(f"Invalid index returned by model: {prediction.selected_index}") from e
             
         if index < 0 or index >= len(population):
-            raise ValueError(f"Selected index {index} out of bounds for population size {len(population)}")
+            raise IndexError(f"Selected index {index} out of bounds [0-{len(population)-1}]")
             
         return population[index]
