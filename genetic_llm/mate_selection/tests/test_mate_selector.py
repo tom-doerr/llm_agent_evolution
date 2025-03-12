@@ -1,4 +1,6 @@
 import pytest
+import dspy
+from unittest import mock
 from genetic_llm.mate_selection import DSPyMateSelector
 from genetic_llm.core import Agent, ChromosomeType
 
