@@ -1,6 +1,6 @@
 ## Updated Considerations
 
-New Implementations:
+**New Implementations:**
 - Added retry logic with exponential backoff (3 attempts)
 - Replaced print statements with structured logging
 - Added detailed error context for failed recombinations

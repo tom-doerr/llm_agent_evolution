@@ -28,7 +28,7 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
                     )
                 child = str(getattr(result, 'child_chromosome', '')) or ''
                 return child
-            except Exception as e:
+            except RuntimeError as e:  # More specific exception type
                 if attempt < max_retries - 1:
                     delay = base_delay * (2 ** attempt)
                     logger.warning("Recombination attempt %d/%d failed. Retrying in %.1fs. Error: %s",

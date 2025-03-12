@@ -4,8 +4,8 @@ import dspy
 from genetic_llm.recombination import DSPyRecombiner
 from genetic_llm.recombination_abc import RecombinerABC
 
-@pytest.fixture
-def mock_recombine(monkeypatch):
+@pytest.fixture(name="mock_recombine_fixture")
+def mock_recombine_fixture(monkeypatch):
     mock = Mock()
     monkeypatch.setattr(dspy, 'ChainOfThought', lambda _: mock)
     return mock
@@ -21,7 +21,7 @@ class TestDSPyRecombiner:
         result = recombiner.combine("ABCDEF", "GHIJKL")
         assert result == "12345"
 
-    def test_combine_empty_parents(self, mock_recombine):
+    def test_combine_empty_parents(self):
         recombiner = DSPyRecombiner()
         result = recombiner.combine("", "")
         assert result == ""
@@ -41,7 +41,7 @@ class TestDSPyRecombiner:
         ("", "valid"),
         ("valid", "")
     ])
-    def test_combine_with_empty_parent(self, mock_recombine, parent1, parent2):
+    def test_combine_with_empty_parent(self, parent1, parent2):
         mock_recombine.return_value = Mock(child_chromosome="hybrid")
         recombiner = DSPyRecombiner()
         assert recombiner.combine(parent1, parent2) == "hybrid"
