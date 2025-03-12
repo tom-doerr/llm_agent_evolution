@@ -1,7 +1,7 @@
 import dspy
 from genetic_llm.recombination_abc import RecombinerABC
 
-class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=type(dspy.Module)):
+class DSPyRecombiner(RecombinerABC, dspy.Module):
     def __init__(self) -> None:
         super().__init__()
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
@@ -19,9 +19,8 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=type(dspy.Module)):
                     parent1_chromosome=parent1,
                     parent2_chromosome=parent2
                 )
-            child = getattr(result, 'child_chromosome', '')
-            return str(child) if child else ''
-        except Exception as e:
+            return str(getattr(result, 'child_chromosome', '')) or ''
+        except Exception as e:  # pylint: disable=broad-exception-caught
             print(f"Recombination error between '{parent1}' and '{parent2}': {str(e)}")
             return ""
 # Package initialization
