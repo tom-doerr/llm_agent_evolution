@@ -23,9 +23,9 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
                 length_penalty * self.config.fitness_weights["length_penalty"]
             )
             
-    def generate_initial(self) -> str:
-        """Generate random initial string with some 'a's"""
+    def generate_initial(self) -> Chromosome:
+        """Generate random initial string with some 'a's as a TASK chromosome"""
         length = random.randint(15, 30)
         vowels = ['a' if random.random() < 0.3 else chr(random.randint(97,122)) 
                 for _ in range(length)]
-        return ''.join(vowels)
+        return Chromosome(ChromosomeType.TASK, ''.join(vowels))

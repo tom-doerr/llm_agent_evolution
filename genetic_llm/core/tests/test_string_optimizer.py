@@ -37,5 +37,6 @@ class TestStringOptimizationEvaluator:
     def test_initial_generation(self, config):
         evaluator = StringOptimizationEvaluator(config)
         initial = evaluator.generate_initial()
-        assert 15 <= len(initial) <= 30
-        assert any(c == 'a' for c in initial.lower())
+        assert 15 <= len(initial.value) <= 30
+        assert any(c == 'a' for c in initial.value.lower())
+        assert initial.type == ChromosomeType.TASK
