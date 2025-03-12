@@ -1,4 +1,7 @@
+import logging
 import dspy
+
+logging.basicConfig(level=logging.INFO)
 from genetic_llm.core import Agent
 from .mate_selection_abc import MateSelector
 
@@ -33,8 +36,8 @@ class DSPyMateSelector(MateSelector, dspy.Module):
                 population_fitness=population_fitness
             )
         
-        # Add debug logging
-        print(f"Model response: {prediction.selected_index}")  # TODO: Replace with proper logging
+        # Log raw model response
+        logging.debug("Model selection response: %s", prediction.selected_index)
         
         try:
             index = int(float(prediction.selected_index.strip()))

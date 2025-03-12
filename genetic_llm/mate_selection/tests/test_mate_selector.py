@@ -1,3 +1,4 @@
+import os
 import pytest
 import dspy
 from unittest import mock
@@ -95,7 +96,7 @@ class TestDSPyMateSelector:
         try:
             selected = selector.select(agents)
             assert selected in agents
-        except Exception as e:
+        except (ValueError, IndexError) as e:
             pytest.fail(f"Integration test failed with real model: {str(e)}")
 
     def test_input_data_format(self):
