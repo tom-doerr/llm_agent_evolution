@@ -11,7 +11,8 @@ class EvolutionEngine(EvolutionEngineABC):
         config: GeneticConfig, 
         mate_selector: MateSelector,
         recombiner: RecombinerABC,
-        evaluator: EvaluatorABC
+        evaluator: EvaluatorABC,
+        mutation_operator: MutationOperatorABC  # New parameter
     ):
         if config.elite_size > config.population_size:
             raise ValueError("Elite size cannot exceed population size")
@@ -19,6 +20,7 @@ class EvolutionEngine(EvolutionEngineABC):
         self.mate_selector = mate_selector
         self.recombiner = recombiner
         self.evaluator = evaluator
+        self.mutation_operator = mutation_operator  # New field
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:  # pylint: disable=too-many-locals
         self.evaluator.evaluate(population)
@@ -39,7 +41,10 @@ class EvolutionEngine(EvolutionEngineABC):
             
             child_chromosomes = {
                 ct: self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct])
-                for ct in parent1.chromosomes.keys()
+                self.recombiner.combine(parent1.chromosomes[ct], parent2.chromosomes[ct]),
+                self.config.mutation_rate
+            )
+            for ct in parent1.chromosomes.keys()
             }
             children.append(Agent(child_chromosomes))  # pylint: disable=abstract-class-instantiated
         return elites + children

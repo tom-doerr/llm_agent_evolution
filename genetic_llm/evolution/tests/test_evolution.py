@@ -22,7 +22,7 @@ class TestEvolutionEngineBasics:
     def test_evolve_population_size_remains_constant(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()  # pylint: disable=abstract-class-instantiated
         )
         population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
@@ -31,7 +31,7 @@ class TestEvolutionEngineBasics:
     def test_elites_are_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()
         )
         
         # Create population with ascending fitness
@@ -50,9 +50,17 @@ class TestEvolutionEngineBasics:
             )
 
     def test_tied_fitness_elite_selection(self):
+        # Add mock mutation operator to constructor
+        engine = TestConcreteEvolutionEngine(
+            GeneticConfig(population_size=5, elite_size=2), 
+            DSPyMateSelector(), 
+            DSPyRecombiner(), 
+            Mock(),
+            Mock()
+        )
         config = GeneticConfig(population_size=5, elite_size=2)
         engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
-            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock(), Mock()
         )
         
         population = [
@@ -67,3 +75,31 @@ class TestEvolutionEngineBasics:
         # Should preserve both top 10 fitness agents
         assert sum(1 for a in new_pop if a.fitness == 10) == 2
 
+
+    def test_mutation_applied_to_children(self):
+        config = GeneticConfig(population_size=3, elite_size=1, mutation_rate=1.0)
+        mutation_mock = Mock(side_effect=lambda x, _: x + "_mutated")
+        engine = TestConcreteEvolutionEngine(
+            config, Mock(), Mock(), Mock(), mutation_mock
+        )
+        
+        population = [
+            TestAgent({"dna": "A"}, fitness=10),
+            TestAgent({"dna": "B"}, fitness=5),
+            TestAgent({"dna": "C"}, fitness=1)
+        ]
+        
+        new_pop = engine.evolve_population(population)
+        child = next(a for a in new_pop if a not in population[:1])  # Skip elite
+        assert "_mutated" in child.chromosomes["dna"]
+
+    def test_mutation_rate_respected(self):
+        config = GeneticConfig(population_size=10, elite_size=2, mutation_rate=0.0)
+        mutation_mock = Mock(return_value="mutated")
+        engine = TestConcreteEvolutionEngine(
+            config, Mock(), Mock(), Mock(), mutation_mock
+        )
+        
+        population = [TestAgent({ct: "orig" for ct in ChromosomeType}) for _ in range(10)]
+        engine.evolve_population(population)
+        mutation_mock.assert_not_called()
