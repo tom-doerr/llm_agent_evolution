@@ -8,7 +8,9 @@ class ChromosomeType(Enum):
     MATE_SELECTION = "mate_selection"
     RECOMBINATION = "recombination"
 
-class GeneticConfig(BaseModel):
+from ..core_abc import GeneticConfigABC
+
+class GeneticConfig(BaseModel, GeneticConfigABC):
     population_size: int = Field(default=50, gt=0)
     mutation_rate: float = Field(default=0.05, ge=0.0, le=1.0)
     elite_size: int = Field(default=5, ge=0)

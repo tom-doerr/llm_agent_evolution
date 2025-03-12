@@ -1,6 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Type
 from . import ChromosomeType
+
+class GeneticConfigABC(ABC):
+    @abstractmethod
+    @classmethod
+    def validate_size(cls, population_size: int) -> bool:
+        """Validate population size meets implementation constraints"""
+        
+    @abstractmethod
+    @classmethod
+    def validate_mutation_rate(cls, rate: float) -> bool:
+        """Validate mutation rate is within acceptable bounds"""
 
 class AgentABC(ABC):
     @abstractmethod
