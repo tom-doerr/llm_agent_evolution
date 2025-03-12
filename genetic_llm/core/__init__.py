@@ -56,7 +56,7 @@ class Agent(AgentABC):
                       if c.type == ChromosomeType.MATE_SELECTION)
         return selector(population, self)
 
-    def recombine(self, partner: 'Agent']) -> 'Agent':
+    def recombine(self, partner: 'Agent') -> 'Agent':
         """Recombine with partner agent using chromosome-defined recombination"""
         recombinator = next(c.value for c in self.chromosomes
                           if c.type == ChromosomeType.RECOMBINATION)
