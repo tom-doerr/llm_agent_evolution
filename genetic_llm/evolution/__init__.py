@@ -3,7 +3,10 @@ from .core import Agent, GeneticConfig
 from genetic_llm.mate_selection_abc import MateSelector
 from genetic_llm.recombination_abc import RecombinerABC
 
-class EvolutionEngine:
+from ..evolution_abc import EvolutionEngineABC
+from ..core_abc import AgentABC
+
+class EvolutionEngine(EvolutionEngineABC):
     def __init__(self, config: GeneticConfig, 
                  mate_selector: MateSelector,
                  recombiner: RecombinerABC):

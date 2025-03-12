@@ -1,6 +1,6 @@
 import click
 import random
-from .evolution import EvolutionEngine
+from .evolution_abc import EvolutionEngineABC
 from .core import GeneticConfig, Agent, ChromosomeType
 from .mate_selection import DSPyMateSelector
 from .recombination import DSPyRecombiner
@@ -16,7 +16,7 @@ def evolve(generations):
     # Create component implementations
     mate_selector = DSPyMateSelector()
     recombiner = DSPyRecombiner()
-    engine = EvolutionEngine(config, mate_selector, recombiner)
+    engine: EvolutionEngineABC = EvolutionEngine(config, mate_selector, recombiner)
     
     # Initialize random population
     population = [

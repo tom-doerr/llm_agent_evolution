@@ -17,7 +17,9 @@ class Chromosome(NamedTuple):
     type: ChromosomeType
     value: str
 
-class Agent:
+from ..core_abc import AgentABC
+
+class Agent(AgentABC):
     def __init__(self, chromosomes: tuple[Chromosome, ...], fitness: float = 0.0):
         # Validate chromosome types
         if not chromosomes:
