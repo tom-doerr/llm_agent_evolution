@@ -6,7 +6,10 @@ class DSPyMateSelector(MateSelector, dspy.Module):
     def __init__(self, model: str = 'openrouter/google/gemini-2.0-flash-001'):
         super().__init__()
         self.lm = dspy.LM(model)
-        self.select_mate = dspy.Predict("population_chromosomes, population_fitness -> selected_index")
+        self.select_mate = dspy.Predict(
+            "population_chromosomes, population_fitness -> selected_index",
+            instructions="Select a 0-based index of the most promising agent from the population. Return ONLY the integer index."
+        )
 
     def select(self, population: list[Agent]) -> Agent:
         if not population:
@@ -22,7 +25,7 @@ class DSPyMateSelector(MateSelector, dspy.Module):
             )
         
         try:
-            index = int(prediction.selected_index)
+            index = int(float(prediction.selected_index.strip()))
         except (ValueError, TypeError) as e:
             raise ValueError(f"Invalid index returned by model: {prediction.selected_index}") from e
             

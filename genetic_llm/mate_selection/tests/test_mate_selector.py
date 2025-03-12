@@ -43,7 +43,10 @@ class TestDSPyMateSelector:
     @pytest.mark.parametrize("index, expected_error", [
         ("invalid", ValueError),
         ("-1", IndexError),
-        ("3", IndexError),
+        ("3", IndexError),  # Population size 3 (0-2)
+        ("2.5", ValueError),
+        (" 3 ", IndexError),
+        ("two", ValueError),
         ("NaN", ValueError)
     ])
     def test_invalid_indices_raise_errors(self, index, expected_error):
