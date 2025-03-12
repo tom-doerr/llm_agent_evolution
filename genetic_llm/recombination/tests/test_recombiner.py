@@ -17,10 +17,10 @@ class TestDSPyRecombiner:
         return mock
 
     def test_combine_valid_parents(self, mock_recombine):
-        mock_recombine.return_value = Mock(child_chromosome="ABCDEFGHIJKL")
+        mock_recombine.return_value = Mock(child_chromosome=12345)  # Test non-string value
         recombiner = DSPyRecombiner()
         result = recombiner.combine("ABCDEF", "GHIJKL")
-        assert result == "ABCDEFGHIJKL"
+        assert result == "12345"  # Verify string conversion
 
     def test_combine_empty_parents(self):
         recombiner = DSPyRecombiner()
