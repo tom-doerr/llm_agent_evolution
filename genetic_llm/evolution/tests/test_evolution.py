@@ -101,8 +101,6 @@ class TestEvolutionValidation:
 class TestEvolutionOperations:
     """Evolution process operation tests"""
 
-    def test_mutation_applied_to_children(self):
-
 class TestValidationMechanisms:
     def test_chromosome_validation(self):
         

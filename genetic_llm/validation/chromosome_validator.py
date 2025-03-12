@@ -12,7 +12,7 @@ class JSONSchemaValidator(ChromosomeValidatorABC):
     def __init__(self, schemas: Dict[str, dict]):
         self.schemas = schemas
         
-    def validate(self, chromosomes: Dict[str, str]) -> bool:
+    def validate(self, chromosomes: Dict[str, str]) -> bool:  # pylint: disable=too-many-locals
         for chromosome_type, json_str in chromosomes.items():
             schema = self.schemas.get(chromosome_type)
             if not schema:
