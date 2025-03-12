@@ -44,7 +44,6 @@ class TestDSPyRecombiner:  # pylint: disable=too-many-public-methods
     def test_combine_with_empty_parent(self, parent1, parent2):
         # Test doesn't need mock since empty parent handling is done before LM call
         recombiner = DSPyRecombiner()
-        recombiner = DSPyRecombiner()
         assert recombiner.combine(parent1, parent2) == ""  # Should return empty per interface
 
     @pytest.mark.parametrize("mock_response", [

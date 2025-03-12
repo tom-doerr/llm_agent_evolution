@@ -11,32 +11,43 @@ class DSPyRecombiner(RecombinerABC, dspy.Module, metaclass=ABCMeta):
         self.lm = dspy.LM('openrouter/google/gemini-2.0-flash-001')
         self.recombine = dspy.ChainOfThought("parent1_chromosome, parent2_chromosome -> child_chromosome")
 
-    def combine(self, parent1: str, parent2: str) -> str:  # pylint: disable=too-many-branches,too-many-return-statements,too-many-locals
-        if not isinstance(parent1, str) or not isinstance(parent2, str):
-            raise ValueError("Both parents must be strings")
+    def combine(self, parent1: str, parent2: str) -> str:
+        self._validate_parents(parent1, parent2)
         if not parent1 and not parent2:
             return ""
-        
-        max_retries = 3
-        base_delay = 1  # seconds
-        for attempt in range(max_retries):
+        return self._retry_recombination(parent1, parent2)
+
+    def _validate_parents(self, parent1: str, parent2: str) -> None:
+        if not isinstance(parent1, str) or not isinstance(parent2, str):
+            raise ValueError("Both parents must be strings")
+
+    def _retry_recombination(self, parent1: str, parent2: str) -> str:
+        for attempt in range(3):
             try:
-                with dspy.context(lm=self.lm):
-                    result = self.recombine(
-                        parent1_chromosome=parent1,
-                        parent2_chromosome=parent2
-                    )
-                child = str(getattr(result, 'child_chromosome', '')) or ''
-                return child
-            except RuntimeError as e:  # More specific exception type
-                if attempt < max_retries - 1:
-                    delay = base_delay * (2 ** attempt)
-                    logger.warning("Recombination attempt %d/%d failed. Retrying in %.1fs. Error: %s",
-                                   attempt + 1, max_retries, delay, e)
-                    time.sleep(delay)
-                else:
-                    logger.error("Recombination failed after %d attempts. Parents: '%s', '%s'. Error: %s",
-                                 max_retries, parent1, parent2, e)
-                    return ""
-        return ""  # Should never be reached
+                return self._attempt_recombination(parent1, parent2)
+            except RuntimeError as e:
+                self._handle_retry_error(attempt, e, parent1, parent2)
+        return ""
+
+    def _attempt_recombination(self, parent1: str, parent2: str) -> str:
+        with dspy.context(lm=self.lm):
+            result = self.recombine(
+                parent1_chromosome=parent1,
+                parent2_chromosome=parent2
+            )
+        return self._parse_result(result)
+
+    def _parse_result(self, result) -> str:
+        child = str(getattr(result, 'child_chromosome', ''))
+        return child.strip() if child else ""
+
+    def _handle_retry_error(self, attempt: int, error: Exception, parent1: str, parent2: str) -> None:
+        if attempt >= 2:  # Final attempt
+            logger.error("Recombination failed after 3 attempts. Parents: '%s', '%s'. Error: %s",
+                         parent1, parent2, error)
+            raise
+        delay = 2 ** attempt
+        logger.warning("Attempt %d/3 failed. Retrying in %ds. Error: %s",
+                       attempt + 1, delay, error)
+        time.sleep(delay)
 # Package initialization

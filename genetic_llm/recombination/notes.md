@@ -1,17 +1,17 @@
-## Updated Considerations
+## Current Improvements
 
-**New Implementations:**
-- Added retry logic with exponential backoff (3 attempts)
-- Replaced print statements with structured logging
-- Added detailed error context for failed recombinations
+New:
+- Refactored complex method into focused helper functions
+- Added proper error propagation for monitoring
+- Fixed test consistency issues
 
-Remaining Issues:
-- Still need JSON validation for chromosome structure
-- No performance metrics for retry effectiveness
-- Logging configuration not centralized
+Remaining:
+- JSON schema validation still needed
+- Metrics tracking not implemented
+- Centralized logging pending
 
 Next Steps:
-1. Implement JSON schema validation for chromosome structure
-2. Add metrics tracking for success/failure rates
-3. Create shared logging configuration
-4. Test with real-world chromosome structures
+1. Add jsonschema validation for chromosome structure
+2. Implement Prometheus metrics endpoint
+3. Create shared logging config in root package
+4. Load test with realistic DNA samples
