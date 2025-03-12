@@ -1,12 +1,12 @@
 import pytest
-from genetic_llm.core import Agent, ChromosomeType, Chromosome, GeneticConfig
+from genetic_llm.core import Agent, ChromosomeType, Chromosome
 from genetic_llm.core_abc import AgentABC
 
-class TestAgent:
+class TestAgent:  # pylint: disable=too-many-public-methods
     def test_implements_abc(self):
         assert issubclass(Agent, AgentABC)
     def test_agent_creation_with_valid_chromosomes(self):
-        agent = Agent((
+        agent = Agent((  # pylint: disable=abstract-class-instantiated
             Chromosome(ChromosomeType.TASK, "test"),
             Chromosome(ChromosomeType.MATE_SELECTION, "test"),
             Chromosome(ChromosomeType.RECOMBINATION, "test")

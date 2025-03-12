@@ -4,21 +4,20 @@ from genetic_llm.core_abc import GeneticConfigABC, AgentABC
 from genetic_llm.core_abc.chromosome_type import ChromosomeType
 import random
 
-def tournament_selection(population: list[Agent], agent: Agent) -> list[Agent]:
-    """Select top 25% performers as mates"""
+def tournament_selection(population: list[Agent]) -> list[Agent]:
+    """Select top 25% performers"""
     k = max(2, len(population) // 4)
     return sorted(population, key=lambda a: a.fitness, reverse=True)[:k]
 
 def single_point_crossover(parent1: Agent, parent2: Agent) -> Agent:
     """Combine task chromosomes from both parents"""
-    task1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK)
-    task2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK)
-    crossover_point = len(task1.value) // 2
-    new_value = task1.value[:crossover_point] + task2.value[crossover_point:]
+    t1 = next(c for c in parent1.chromosomes if c.type == ChromosomeType.TASK).value
+    t2 = next(c for c in parent2.chromosomes if c.type == ChromosomeType.TASK).value
+    crossover_point = len(t1) // 2
     return Agent((
-        Chromosome(ChromosomeType.TASK, new_value),
-        parent1.chromosomes[1],  # mate selection
-        parent1.chromosomes[2],  # recombination
+        Chromosome(ChromosomeType.TASK, t1[:crossover_point] + t2[crossover_point:]),
+        parent1.chromosomes[1],
+        parent1.chromosomes[2],
     ))
 
 

@@ -1,6 +1,6 @@
 ## Current Issues
 1. Fitness normalization needs more sophisticated scaling
-2. Limited mutation implementation
+2. Limited mutation implementation 
 3. Selection pressure not configurable
 
 ## Next Steps

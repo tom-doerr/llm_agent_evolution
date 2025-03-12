@@ -7,7 +7,7 @@ class StringOptimizationEvaluator(PopulationEvaluatorABC):
     def __init__(self, config: GeneticConfig):
         self.config = config
         
-    def evaluate(self, population: list[Agent]) -> None:
+    def evaluate(self, population: list[Agent]) -> None:  # pylint: disable=too-many-locals
         max_fitness = -float('inf')
         min_fitness = float('inf')
         
