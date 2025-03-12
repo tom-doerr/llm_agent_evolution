@@ -13,26 +13,27 @@ logger = logging.getLogger(__name__)
 class SelectionTimeoutError(Exception):
     """Custom timeout exception for selection operations"""
 
-def timeout_wrapper(func, timeout, args=(), kwargs=None):
+def timeout_wrapper(func, timeout, args=(), *, kwargs=None):
     """Cross-platform timeout decorator implementation"""
-    result = []
-    exception = []
+    outcome = []
     
-    def wrapper():
+    def worker():
         try:
-            result.append(func(*args, **(kwargs or {})))
-        except Exception as e:
-            exception.append(e)
+            outcome.append(func(*args, **(kwargs or {})))
+        except (ValueError, IndexError, TimeoutError) as e:
+            outcome.append(e)
     
-    thread = threading.Thread(target=wrapper)
+    thread = threading.Thread(target=worker)
     thread.start()
     thread.join(timeout)
     
     if thread.is_alive():
         raise SelectionTimeoutError(f"Timeout after {timeout} seconds")
-    if exception:
-        raise exception[0]
-    return result[0]
+    
+    if not outcome or isinstance(outcome[0], Exception):
+        raise outcome[0] if outcome else SelectionTimeoutError(f"Timeout after {timeout} seconds")
+    
+    return outcome[0]
 
 class DSPyMateSelector(MateSelector, dspy.Module):
     def _get_population_data(self, population: list[Agent]) -> dict:
