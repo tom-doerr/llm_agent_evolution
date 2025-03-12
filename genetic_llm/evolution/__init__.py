@@ -7,12 +7,13 @@ from genetic_llm.evaluator_abc import EvaluatorABC  # pylint: disable=no-name-in
 
 class EvolutionEngine(EvolutionEngineABC):
     def __init__(  # pylint: disable=too-many-arguments
-        self, 
+        self,
         config: GeneticConfig, 
         mate_selector: MateSelector,
         recombiner: RecombinerABC,
         evaluator: EvaluatorABC,
-        mutation_operator: MutationOperatorABC  # New parameter
+        mutation_operator: MutationOperatorABC,
+        chromosome_validator: ChromosomeValidatorABC  # New parameter
     ):
         if config.elite_size > config.population_size:
             raise ValueError("Elite size cannot exceed population size")
@@ -20,11 +21,16 @@ class EvolutionEngine(EvolutionEngineABC):
         self.mate_selector = mate_selector
         self.recombiner = recombiner
         self.evaluator = evaluator
-        self.mutation_operator = mutation_operator  # New field
+        self.mutation_operator = mutation_operator
+        self.validator = chromosome_validator  # New field
         
     def evolve_population(self, population: list[Agent]) -> list[Agent]:  # pylint: disable=too-many-locals
         self.evaluator.evaluate(population)
         
+        # Validate existing population first
+        for agent in population:
+            self.validator.validate(agent.chromosomes)
+
         elites = sorted(population, key=lambda x: x.fitness, reverse=True)[:self.config.elite_size]
         children = []
         
@@ -46,6 +52,8 @@ class EvolutionEngine(EvolutionEngineABC):
                 )
                 for ct in parent1.chromosomes.keys()
             }
+            
+            self.validator.validate(child_chromosomes)  # Validate new children
             children.append(Agent(child_chromosomes))  # pylint: disable=abstract-class-instantiated
         return elites + children
 # Package initialization

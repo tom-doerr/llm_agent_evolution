@@ -93,6 +93,48 @@ class TestEvolutionEngineBasics:
         child = next(a for a in new_pop if a not in population[:1])  # Skip elite
         assert "_mutated" in child.chromosomes["dna"]
 
+    def test_chromosome_validation():
+        from genetic_llm.validation import JSONSchemaValidator
+        
+        schemas = {
+            "dna": {
+                "type": "object",
+                "properties": {
+                    "sequence": {"type": "string"},
+                    "length": {"type": "number"}
+                },
+                "required": ["sequence"]
+            }
+        }
+        validator = JSONSchemaValidator(schemas)
+        
+        # Valid case
+        valid_agent = TestAgent({"dna": '{"sequence": "ATCG", "length": 4}'})
+        assert validator.validate(valid_agent.chromosomes) is True
+        
+        # Invalid JSON
+        invalid_json_agent = TestAgent({"dna": "{bad json}"})
+        with pytest.raises(ValueError):
+            validator.validate(invalid_json_agent.chromosomes)
+            
+        # Missing required field
+        invalid_schema_agent = TestAgent({"dna": '{"length": 4}'})
+        with pytest.raises(ValueError):
+            validator.validate(invalid_schema_agent.chromosomes)
+
+    def test_evolution_engine_validates_population():
+        mock_validator = Mock()
+        engine = TestConcreteEvolutionEngine(
+            GeneticConfig(population_size=10, elite_size=2),
+            Mock(), Mock(), Mock(), Mock(),
+            mock_validator
+        )
+        
+        population = [TestAgent({ct: "{}" for ct in ChromosomeType}) for _ in range(10)]
+        engine.evolve_population(population)
+        
+        assert mock_validator.validate.call_count == len(population) + 8  # 10 existing + 8 new children
+
     def test_mutation_rate_respected(self):
         config = GeneticConfig(population_size=10, elite_size=2, mutation_rate=0.0)
         mutation_mock = Mock(return_value="mutated")
