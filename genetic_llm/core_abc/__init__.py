@@ -3,8 +3,8 @@ from typing import Dict, Type
 from .chromosome_type import ChromosomeType
 
 class GeneticConfigABC(ABC):
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def validate_size(cls, population_size: int) -> bool:
         """Validate population size meets implementation constraints"""
         
