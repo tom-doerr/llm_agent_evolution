@@ -21,18 +21,17 @@ class TestEvolutionEngineBasics:
         assert issubclass(EvolutionEngine, EvolutionEngineABC)
     def test_evolve_population_size_remains_constant(self):
         config = GeneticConfig(population_size=10, elite_size=2)
-        engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        )
         population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
         new_pop = engine.evolve_population(population)
         assert len(new_pop) == config.population_size
     
     def test_elites_are_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
-        engine = TestConcreteEvolutionEngine(
-            config, 
-            DSPyMateSelector(),
-            DSPyRecombiner(),
-            Mock()
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
         )
         
         # Create population with ascending fitness
@@ -46,11 +45,15 @@ class TestEvolutionEngineBasics:
     def test_invalid_elite_size_raises_error(self):
         config = GeneticConfig(population_size=5, elite_size=10)
         with pytest.raises(ValueError, match="Elite size cannot exceed population size"):
-            TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
+            TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+                config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+            )
 
     def test_tied_fitness_elite_selection(self):
         config = GeneticConfig(population_size=5, elite_size=2)
-        engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        )
         
         population = [
             TestAgent({"dna": "A"}, fitness=10),
@@ -67,7 +70,9 @@ class TestEvolutionEngineBasics:
 class TestEvolutionEngineSemantics:
     def test_chromosome_types_preserved(self):
         config = GeneticConfig(population_size=10, elite_size=2)
-        engine = TestConcreteEvolutionEngine(config, DSPyMateSelector(), DSPyRecombiner(), Mock())
+        engine = TestConcreteEvolutionEngine(  # pylint: disable=abstract-class-instantiated
+            config, DSPyMateSelector(), DSPyRecombiner(), Mock()
+        )
         
         # Create initial population with all chromosome types
         population = [TestAgent({ct: "test" for ct in ChromosomeType}) for _ in range(10)]
